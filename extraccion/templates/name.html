@@ -1,0 +1,11 @@
+<form action="/forms" method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    {% for field in form %}
+        <div class="fieldWrapper">
+            {{ field.errors }}
+            {{ field.label_tag }} {{ field }}
+        </div>
+    {% endfor %}
+    <br>
+    <input type="submit" value="Hacer extracción de datos">
+</form>

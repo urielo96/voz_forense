@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title> Análisis forense de audios</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
+        crossorigin="anonymous"></script>
+</head>
+
+<body>
+    <div class="wrapper">
+        <!-- Image and text -->
+        <div style="display: flex; align-items: center;">
+            <img src="descarga.jpeg" alt="Logo de la ENCF" style="width: auto; height: 100px;">
+            <nav>
+                <p style="display: flex; color: aliceblue;"> Proyecto de la Escuela Nacional de Ciencias Forenses</p>
+            </nav>
+        </div>
+
+        <div class="container-fluid">
+
+            <h1 style="background-color: rgb(0,61,100); color: aliceblue;">Análisis forense de audios</h1>
+            <h5>Extracción de características principales</h5>
+            <p style="text-align: left;"> 
+                Carga dentro del sitio web el audio sobre el cual quieras extraer sus características principales.
+                Después podrás elegir hacer otros análisis con los datos extraídos y selecionando una población de referencia.
+            </p>
+
+            <p style="text-align: left;">
+                Si se carga uno solo de ambos audios entonces el archivo excel para descargar se generará solamente
+                con uno de ellos, si se cargan ambos entonces el excel generado les incluirá tanto al audio indubitado
+                como al audio dubitado, uno seguido del otro.
+
+            </p>
+
+            <form method="POST" enctype="multipart/form-data" id="audioForm">
+                <div class="results-box">
+                    <div class="row">
+                        <h4>¡Agregar selección por género!</h4>
+                            <div class="column">
+                                <div>
+                                    <div class="file-input-container">
+                                        <h4>Hablante indubitado:</h4>
+                                        <hr>
+                                        <label title="Grabación de voz con identidad del hablante indubitado" for="audio1" style="color: black;">Voz indubitada:</label>
+                                        <input type="file" id="audio1" name="audio1" accept=".wav">
+                                        
+                                        <label title="Text-grid del hablante indutiado" for="text-grid1" style="color: black;">Textgrid indubitado:</label>
+                                        <input type="file" id="text-grid1" name="text-grid1" accept=".textgrid">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="column">
+                                <div>
+                                    <div class="file-input-container">
+                                        <h4>Hablante dubitado:</h4>
+                                        <hr>
+                                        <label title="Grabación de voz con identidad del hablante dubitado" for="audio2" style="color: black;">Voz dubitada:</label>
+                                        <input type="file" id="audio2" name="audio2" accept=".wav">
+
+                                        <label title="Text-grid del hablante dubitado" for="text-grid2" style="color: black;">Textgrid dubitado:</label>
+                                        <input type="file" id="text-grid2" name="text-grid2" accept=".textgrid">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <button type="submit" name="download-du" class="btn-success" style="align-content:end">Generar archivo de Excel</button>
+                </div>
+                <div class="row">
+                    <div class="column3">
+                        <div class="results-box">
+                            <h4 sytle="text-align: center;">Vocales:</h4>
+                            <hr>
+                            <div class="row">
+                                <div class="column2" style="text-align: center;">
+                                    <form>
+                                        <label for="fonema" style="color: black;">Fonema:</label>
+                                        <br>
+                                        <input type="checkbox" id="a" name="a" value="a">
+                                        <label for="a"> a   </label><br>
+                                        <input type="checkbox" id="e" name="e" value="e">
+                                        <label for="e"> e   </label><br>
+                                        <input type="checkbox" id="i" name="i" value="i">
+                                        <label for="i"> i   </label><br>
+                                        <input type="checkbox" id="o" name="o" value="o">
+                                        <label for="o"> o   </label><br>
+                                        <input type="checkbox" id="u" name="u" value="u">
+                                        <label for="u"> u   </label><br>
+                                    </form>
+                                </div>
+
+                                <div class="column2"  style="text-align: center;">
+                                    <form>
+                                        <label style="color: black;">Párametros:</label>
+                                        <br>
+                                        <div class="row">
+                                            <div class="column">
+                                                <input type="checkbox" id="f0" name="f0" value="f0">
+                                                <label for="f0"> F0   </label><br>
+                                                <input type="checkbox" id="f1" name="f1" value="f1">
+                                                <label for="f1"> F1   </label><br>
+                                                <input type="checkbox" id="f2" name="f2" value="f2">
+                                                <label for="f2"> F2   </label><br>
+                                            </div>
+                                            <div class="column">
+                                                <input type="checkbox" id="f3" name="f3" value="f3">
+                                                <label for="f3"> F3</label><br>
+                                                <input type="checkbox" id="f4" name="f4" value="f4">
+                                                <label for="f4"> F4</label><br>
+                                                <input type="checkbox" id="duracion" name="duracion" value="duracion">
+                                                <label for="duracion"> Duración</label><br>
+                                            </div>
+
+                                        </div>
+                                    </form>
+                                </div>
+
+                                <div class="column2"  style="text-align: center;">
+                                    <form>
+                                        <label style="color: black;"> Medida:</label><br>
+                                        <input type="radio" id="promedio" name="medida" value="promedio">
+                                        <label for="promedio">Promedio</label><br>
+                                        <input type="radio" id="medio" name="medida" value="medio">
+                                        <label for="medio">Punto medio</label><br>
+                                        <input type="radio" id="maximo" name="medida" value="maximo">
+                                        <label for="maximo">Máximo</label><br>
+                                        <input type="radio" id="minimo" name="medida" value="minimo">
+                                        <label for="minimo">Mínimo</label><br>
+                                    </form>
+                                </div>
+                            </div>
+
+                        </div>
+
+                        <div class="results-box">
+                            <h4 sytle="text-align: center;">Sonido de la /s/:</h4>
+                            <hr>
+                            <div class="row">
+                                <div class="column4"  style="text-align: center;">
+                                    <form>
+                                        <label style="color: black;"> Intensidad:</label><br>
+                                        <input type="radio" id="promedio" name="intensidad" value="promedio">
+                                        <label for="promedio">Promedio</label><br>
+                                        <input type="radio" id="maximo" name="intensidad" value="maximo">
+                                        <label for="medio">Máximo</label><br>
+                                    </form>
+                                </div>
+
+                                <div class="column4"  style="text-align: center;">
+                                    <form>
+                                        <label style="color: black;">Espectro:</label>
+                                        <br>
+                                        <input type="checkbox" id="p_promedio" name="p_promedio" value="p_promedio">
+                                        <label for="p_promedio"> Centro de gravedad  </label><br>
+                                        <input type="checkbox" id="p_maximo" name="p_maximo" value="p_maximo">
+                                        <label for="p_maximo"> Desviación estándar   </label><br>
+                                        <input type="checkbox" id="p_minimo" name="p_minimo" value="p_minimo">
+                                        <label for="p_minimo"> Skewness (asimetría)  </label><br>
+                                        <input type="checkbox" id="p_cuatil" name="p_cuatil" value="p_cuatil">
+                                        <label for="p_cuatil"> Curtosis</label><br>
+                                    </form>
+                                </div>
+                            </div>
+
+                        </div>
+                        
+                    </div>
+                </div>
+                
+
+                <hr style="width:120%;text-align:left;margin-left:0">
+
+                <div class="container-fluid">
+                    <br>
+                    <p> Selecciona un método para trabajar con las características de tu audio:</p>
+                    <div class="results-box">
+                        <button type="submit" name="nettoie" class="btn-success">Mezclas Gaussianas</button>
+                        <button type="submit" name="nettoie" class="btn-warning">Análisis multivariado</button>
+                    </div>
+                </div>
+                
+            </form>
+        </div>
+        
+        <footer>
+            <div>
+                Proyecto académico para brindar herramientas de análisis de Ciencia Forense.
+            </div>
+        </footer>
+    </div>
+    <div id="loading" class="loading-spinner" style="display: none;">
+        <div class="spinner"></div>
+    </div>
+
+</body>
+
+</html>
+
+<script>
+    document.getElementById('audioForm').addEventListener('submit', function () {
+        document.getElementById('loading').style.display = 'flex';
+    });
+</script>
