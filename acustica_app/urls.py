@@ -20,7 +20,6 @@ from extraccion import views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('',views.inicial),
-    path('hello/<str:variable>',views.hello),
-    path('forms',views.get_name,name='report_dowload'),
+    path('', views.get_name, name='index'),
+    path('hello/<str:variable>', views.hello),
 ]

@@ -9,9 +9,6 @@ import python_code.extraccion_parametros as ep
 import shutil
 
 # Create your views here.
-def inicial(request):
-    return render(request, 'extraccion_principal.html')
-
 def hello(request,variable):
     print(variable)
     return HttpResponse("<h1> Hola, estudiantx %s </h1>" % variable)
