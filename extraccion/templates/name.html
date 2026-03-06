@@ -8,11 +8,30 @@
     <style>
         body {
             font-family: 'Roboto', 'Segoe UI', Arial, sans-serif;
-            background: linear-gradient(120deg, #e3eafc 0%, #f7faff 100%);
             margin: 0;
             min-height: 100vh;
             display: flex;
             flex-direction: column;
+            position: relative;
+            /* Fondo degradado dinámico */
+            background: linear-gradient(135deg, #e3eafc 0%, #c2e9fb 40%, #f7faff 100%);
+            overflow: hidden;
+        }
+        /* Fondo SVG institucional con logo en baja opacidad */
+        .background-svg {
+            position: absolute;
+            top: 0; left: 0; width: 100vw; height: 100vh;
+            z-index: 0;
+            pointer-events: none;
+        }
+        .background-logo {
+            position: absolute;
+            right: 5vw;
+            bottom: 5vh;
+            width: 320px;
+            opacity: 0.08;
+            z-index: 1;
+            pointer-events: none;
         }
         .form-row {
             display: flex;
@@ -27,12 +46,15 @@
         .form-container {
             max-width: 700px;
             margin: 40px auto;
-            background: #fff;
+            background: rgba(255,255,255,0.92);
             border-radius: 16px;
             box-shadow: 0 4px 24px rgba(0,0,0,0.10);
             padding: 32px 40px 24px 40px;
             border: 1px solid #e0e6ed;
             animation: fadeIn 1s;
+            position: relative;
+            z-index: 2;
+            backdrop-filter: blur(2px);
         }
         @keyframes fadeIn {
             from { opacity: 0; transform: translateY(30px); }
@@ -84,6 +106,8 @@
         }
         .logo-bar {
             text-align:center; padding:32px 0 0 0;
+            position: relative;
+            z-index: 2;
         }
         .logo-bar img {
             height:64px; margin-bottom:8px; margin-right:16px; vertical-align:middle;
@@ -100,6 +124,7 @@
             border-top-left-radius: 16px;
             border-top-right-radius: 16px;
             box-shadow: 0 -2px 8px rgba(26,42,78,0.08);
+            z-index: 2;
         }
         @media (max-width: 800px) {
             .form-row {
@@ -109,10 +134,22 @@
             .form-container {
                 padding: 18px 8px 18px 8px;
             }
+            .background-logo {
+                width: 180px;
+                right: 2vw;
+                bottom: 2vh;
+            }
         }
     </style>
 </head>
 <body>
+    <!-- SVG decorativo institucional -->
+    <svg class="background-svg" viewBox="0 0 1440 900" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path fill="#c2e9fb" fill-opacity="0.18" d="M0,800 C400,700 1040,1000 1440,800 L1440,900 L0,900 Z"/>
+        <path fill="#1a2a4e" fill-opacity="0.08" d="M0,600 C600,500 840,1100 1440,700 L1440,900 L0,900 Z"/>
+    </svg>
+    <!-- Logo institucional UNA en baja opacidad -->
+    <img class="background-logo" src="/static/img/logo_una.png" alt="Logo UNA" onerror="this.style.display='none'">
     <div class="logo-bar">
         <img src="/static/img/logo_una.png" alt="Logo UNA Ciencias Forenses" onerror="this.style.display='none'">
         <img src="/static/img/logo_selifo.png" alt="Logo SELIFO" onerror="this.style.display='none'">
@@ -121,7 +158,7 @@
     </div>
     <div class="form-container">
         <h2>Extracción de Datos</h2>
-        <form action="/forms" method="post" enctype="multipart/form-data">
+        <form action="/" method="post" enctype="multipart/form-data">
             {% csrf_token %}
             <div class="form-row">
                 <div class="form-col">
