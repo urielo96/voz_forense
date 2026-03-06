@@ -2,9 +2,8 @@ from django.shortcuts import render
 from django.http import HttpResponse, FileResponse
 from .form import FormDeArchivos
 from django.shortcuts import get_object_or_404
+from django.conf import settings
 import os
-from django.core.files.storage import default_storage
-from django.core.files.base import ContentFile
 import python_code.extraccion_parametros as ep
 import shutil
 
@@ -21,18 +20,34 @@ def get_name(request):
         # Hasta ahora no hace validaciones sobre el formulario
         if form.is_valid():
 
-            # Aquí lo gestiona FILES
+            # Crear el directorio temporal si no existe
+            temporal_dir = os.path.join(settings.BASE_DIR, 'temporal_file_storage')
+            os.makedirs(temporal_dir, exist_ok=True)
+
+            # Aquí lo gestiona FILES - guardar archivos directamente
             voz_indubitada = request.FILES["voz_indubitada"]
-            path_voz_indubitada = default_storage.save('temporal_file_storage/voz_indubitada.wav', ContentFile(voz_indubitada.read()))
+            path_voz_indubitada = os.path.join(temporal_dir, 'voz_indubitada.wav')
+            with open(path_voz_indubitada, 'wb') as f:
+                for chunk in voz_indubitada.chunks():
+                    f.write(chunk)
             
             textgrid_indubitado = request.FILES["textgrid_indubitada"]
-            path_textgrid_indubitado = default_storage.save('temporal_file_storage/voz_indubitada.TextGrid', ContentFile(textgrid_indubitado.read()))
+            path_textgrid_indubitado = os.path.join(temporal_dir, 'voz_indubitada.TextGrid')
+            with open(path_textgrid_indubitado, 'wb') as f:
+                for chunk in textgrid_indubitado.chunks():
+                    f.write(chunk)
 
             voz_dubitada = request.FILES["voz_dubitada"]
-            path_voz_dubitada = default_storage.save('temporal_file_storage/voz_dubitada.wav', ContentFile(voz_dubitada.read()))
+            path_voz_dubitada = os.path.join(temporal_dir, 'voz_dubitada.wav')
+            with open(path_voz_dubitada, 'wb') as f:
+                for chunk in voz_dubitada.chunks():
+                    f.write(chunk)
 
             textgrid_dubitado = request.FILES["textgrid_dubitada"]
-            path_textgrid_dubitado = default_storage.save('temporal_file_storage/voz_dubitada.TextGrid', ContentFile(textgrid_dubitado.read()))
+            path_textgrid_dubitado = os.path.join(temporal_dir, 'voz_dubitada.TextGrid')
+            with open(path_textgrid_dubitado, 'wb') as f:
+                for chunk in textgrid_dubitado.chunks():
+                    f.write(chunk)
 
             # Aquí lo gestiona POST o cleanded data
             genero_i = form.cleaned_data.get('genero')
@@ -48,21 +63,22 @@ def get_name(request):
             kur = 'kur' in espectro
 
             # Hace las extracciones sobre los archivos guardados
-            ep.process_sample_separado(os.path.join(os.getcwd(), 'temporal_file_storage'),vocales=fonema, genero = genero_i, pitch_mode= medida, intensity_mode = intensidad, center_b= center, sd_b= sd, sk_b= sk, kur_b= kur)
+            ep.process_sample_separado(temporal_dir, vocales=fonema, genero=genero_i, pitch_mode=medida, intensity_mode=intensidad, center_b=center, sd_b=sd, sk_b=sk, kur_b=kur)
 
             # Hacer un comprimido para la descarga del CSV 
-            shutil.make_archive("extraccion",'zip',os.path.join(os.getcwd(), 'temporal_file_storage'))
+            zip_path = os.path.join(settings.BASE_DIR, 'extraccion')
+            shutil.make_archive(zip_path, 'zip', temporal_dir)
 
             filename = 'extraccion.zip'
-            file_path = os.path.join(os.getcwd(), filename)
+            file_path = os.path.join(settings.BASE_DIR, filename)
 
             with open(file_path, 'rb') as f:
                 data = f.read()
 
-            response = HttpResponse(data, content_type='zip')
+            response = HttpResponse(data, content_type='application/zip')
             response['Content-Disposition'] = f'attachment; filename="{filename}"'
             
-            ep.reset_archivos(os.path.join(os.getcwd(), 'temporal_file_storage'))
+            ep.reset_archivos(temporal_dir)
 
             return response
 
