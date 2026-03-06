@@ -20,6 +20,6 @@ from extraccion import views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('', views.get_name, name='index'),
+    path('', views.get_name, name='extraccion'),
     path('hello/<str:variable>', views.hello),
 ]
