@@ -71,22 +71,23 @@ def extract_interval_features_s(sound, intensity, intensity_mode, start, stop, c
     valores_s.append(intensity_value)
 
     #ESPECTRO
-    s1=sound.extract_part(from_time=start, to_time=stop)#extraccion de audio del intervalo
-    sp1=s1.to_spectrum() # Este valor sólo se utiliza para sacar center, sd, sk, kur
-    if center_b:
-        center= parselmouth.praat.call(sp1, "Get centre of gravity",2)
-        valores_s.append(center)
-    if sd_b:
-        sd= parselmouth.praat.call(sp1, "Get standard deviation",2)
-        valores_s.append(sd)
-    if sk_b:
-        sk= parselmouth.praat.call(sp1, "Get skewness",2)
-        valores_s.append(sk)
-    if kur_b:
-        kur= parselmouth.praat.call(sp1, "Get kurtosis",2)
-        valores_s.append(kur)
-
-    # Regresa una lista que varía según los valores extraídos
+    if any([center_b, sd_b, sk_b, kur_b]): #...evitamos que se calcule el espectro si no hay ninguna opcion
+        s1=sound.extract_part(from_time=start, to_time=stop)#extraccion de audio del intervalo
+        sp1=s1.to_spectrum() # Este valor sólo se utiliza para sacar center, sd, sk, kur
+        if center_b:
+            center= parselmouth.praat.call(sp1, "Get centre of gravity",2)
+            valores_s.append(center)
+        if sd_b:
+            sd= parselmouth.praat.call(sp1, "Get standard deviation",2)
+            valores_s.append(sd)
+        if sk_b:
+            sk= parselmouth.praat.call(sp1, "Get skewness",2)
+            valores_s.append(sk)
+        if kur_b:
+            kur= parselmouth.praat.call(sp1, "Get kurtosis",2)
+            valores_s.append(kur)
+    
+        # Regresa una lista que varía según los valores extraídos
     return ([start, stop, stop-start] + valores_s)
 
 
@@ -117,9 +118,7 @@ def process_file(file_path, genero, pitch_mode, formant_mode, intensity_mode, ce
         # Consulté https://www.fon.hum.uva.nl/praat/manual/Sound__To_Formant__burg____.html
         formant = parselmouth.praat.call(sound, "To Formant (burg)", 0.005, 5, 5000, 0.025, 50)
 
-    formantes = []
-    for i in formant_mode:
-        formantes.append('F'+str(i)+'_'+pitch_mode)
+    formantes = [f'F{i}_{pitch_mode}' for i in formant_mode] #...Cambio, mas legible y evita varias llamadas al .append
 
     # Definir los nombres de columna para el DataFrame
     column_names = ['name','Label','Start', 'Stop','Duration', pitch_mode + '_Pitch'] + formantes + [intensity_mode + '_Intensity']
@@ -163,9 +162,7 @@ def process_file_vocal(file_path, vocales , genero, pitch_mode, formant_mode):
         # Consulté https://www.fon.hum.uva.nl/praat/manual/Sound__To_Formant__burg____.html
         formant = parselmouth.praat.call(sound, "To Formant (burg)", 0.005, 5, 5000, 0.025, 50)
 
-    formantes = []
-    for i in formant_mode:
-        formantes.append('F'+str(i)+'_'+pitch_mode)
+    formantes = [f'F{i}_{pitch_mode}' for i in formant_mode] #...Cambio, mas legible y evita varias llamadas al .append
 
     # Definir los nombres de columna para el DataFrame
     column_names = ['name','Label','Start', 'Stop','Duration', pitch_mode + '_Pitch'] + formantes
@@ -174,9 +171,8 @@ def process_file_vocal(file_path, vocales , genero, pitch_mode, formant_mode):
 
     #Análisis por intervalo
     interval_features = []
-    for start, stop, label in word_tier.entryList:
-        for vocal in vocales:
-            if vocal in label:
+    for start, stop, label in word_tier.entryList: #...Cambio, evitamos que siga ejecuandose cuando ya encontro una vocal en vocales
+        if any(vocal in label for vocal in vocales):
                 interval_features.append([name, label]+ extract_interval_features_vocal(pitch, pitch_mode, formant, formant_mode, start, stop))
 
     return pd.DataFrame(interval_features, columns=column_names)
@@ -218,14 +214,13 @@ Función para el análisis por muestra (archivo) dada su ubicacion (directorio d
 def process_sample(directory,genero='X',pitch_mode="mean", formant_mode = [0,1,2,3,4],intensity_mode="mean",center_b=False,sd_b = False, sk_b = False, kur_b = False):
     EXTENSIONS = {'.wav', '.TextGrid'}
     # Diccionario para contar archivos por observacion
-    grouped_files = defaultdict(int)
-
+    #... Hice un cambio debidio a que el diccionario inicial contaba cuantas veces aparecia el path de un archivo, pero al final solo va a utilizar el path existente no el conteo.
+    files = set()
     for f in os.listdir(directory):
         nombre, ext = os.path.splitext(os.path.join(directory, f))
         if ext in EXTENSIONS:
-            grouped_files[nombre] += 1
-
-    files = list(grouped_files.keys())  #lista que contiene el path base (sin extension) de todas las observaciones. ej: /content/audios/1MMFS
+            files.add(nombre)
+    files = list(files)  #lista que contiene el path base (sin extension) de todas las observaciones. ej: /content/audios/1MMFS
                         #este path tiene el formato de imput para la funcion "last_tier" y "process_file"
 
     general = []
@@ -237,9 +232,8 @@ def process_sample(directory,genero='X',pitch_mode="mean", formant_mode = [0,1,2
         df.to_csv(file_path + "_data.csv", index=False)
 
     # Generar un CSV general
-    df_general = general[0]  # Este DataFrame contendrá la información de todos
-    for i in range(1, len(general)):
-        df_general = pd.concat([df_general, general[i]])
+    # Este DataFrame contendrá la información de todos
+    df_general = pd.concat(general, ignore_index=True) #...Cambio evitamos hacer un loop
 
     df_general.to_csv(os.path.join(directory, "General.csv"), index=False)
 
@@ -249,16 +243,14 @@ Función para el análisis por muestra (archivo) dada su ubicacion (directorio d
 def process_sample_separado(directory,vocales = ['a','e','i','o','u'],genero='X',pitch_mode="mean", formant_mode = [1,2,3,4],intensity_mode="mean",center_b=False,sd_b = False, sk_b = False, kur_b = False):
     EXTENSIONS = {'.wav', '.TextGrid'}
     # Diccionario para contar archivos por observacion
-    grouped_files = defaultdict(int)
-
     #directory = os.path.join(directory,"..","temporal_file_storage")
-
+    #... Mismo cambio que en process_sample
+    files = set()
     for f in os.listdir(directory):
         nombre, ext = os.path.splitext(os.path.join(directory, f))
         if ext in EXTENSIONS:
-            grouped_files[nombre] += 1
-
-    files = list(grouped_files.keys())  #lista que contiene el path base (sin extension) de todas las observaciones. ej: /content/audios/1MMFS
+            files.add(nombre)
+    files = list(files)  #lista que contiene el path base (sin extension) de todas las observaciones. ej: /content/audios/1MMFS
                         #este path tiene el formato de imput para la funcion "last_tier" y "process_file"
 
     general_s = []
@@ -275,14 +267,13 @@ def process_sample_separado(directory,vocales = ['a','e','i','o','u'],genero='X'
         df_s.to_csv(file_path + "_data_S.csv", index=False)
 
     # Generar un CSV vocal general
-    df_general_vocal = general_vocal[0]  # Este DataFrame contendrá la información de todos
-    for i in range(1, len(general_vocal)):
-        df_general_vocal = pd.concat([df_general_vocal, general_vocal[i]])
+    # Este DataFrame contendrá la información de todos
+    #...Mismo cambio que en process_sample
+    df_general_vocal = pd.concat(general_vocal, ignore_index = True)
 
     # Generar un CSV de s general
-    df_general_s = general_s[0]  # Este DataFrame contendrá la información de todos
-    for i in range(1, len(general_s)):
-        df_general_s = pd.concat([df_general_s, general_s[i]])
+    # Este DataFrame contendrá la información de todos
+    df_general_s = pd.concat(general_s, ignore_index = True)
 
     df_general_vocal.to_csv(os.path.join(directory, "General_Vocal.csv"), index=False)
     df_general_s.to_csv(os.path.join(directory, "General_S.csv"), index=False)
