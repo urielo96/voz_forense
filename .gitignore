@@ -1,0 +1,23 @@
+# Base de datos
+*.sqlite3
+
+# Archivos temporales de audio
+temporal_file_storage/
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Entorno virtual
+venv/
+env/
+.env
+
+# Django
+staticfiles/
+media/
+
+# Sistema operativo
+.DS_Store
