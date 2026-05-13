@@ -237,15 +237,17 @@ def process_sample(directory,genero='X',pitch_mode="mean", formant_mode = [0,1,2
 
     df_general.to_csv(os.path.join(directory, "General.csv"), index=False)
 
-'''
-Función para el análisis por muestra (archivo) dada su ubicacion (directorio de la carpeta de audios) .
-'''
+
+#Función para el análisis por muestra (archivo) dada su ubicacion (directorio de la carpeta de audios) .
+
 def process_sample_separado(directory,vocales = ['a','e','i','o','u'],genero='X',pitch_mode="mean", formant_mode = [1,2,3,4],intensity_mode="mean",center_b=False,sd_b = False, sk_b = False, kur_b = False):
+    
     EXTENSIONS = {'.wav', '.TextGrid'}
     # Diccionario para contar archivos por observacion
     #directory = os.path.join(directory,"..","temporal_file_storage")
     #... Mismo cambio que en process_sample
     files = set()
+    
     for f in os.listdir(directory):
         nombre, ext = os.path.splitext(os.path.join(directory, f))
         if ext in EXTENSIONS:

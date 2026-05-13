@@ -1,3 +1,3 @@
 from django.contrib import admin
 
-# Register your models here.
+# Aqui ponemos los modelos que se podran ver emn /admin

@@ -19,7 +19,10 @@ from django.urls import path
 from extraccion import views
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
+
+    #Página de inicio  
     path('', views.get_name, name='extraccion'),
-    path('hello/<str:variable>', views.hello),
+    
+    # Pagina del admin de django
+    path('admin/', admin.site.urls),
 ]

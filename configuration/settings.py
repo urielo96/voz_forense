@@ -51,7 +51,7 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
-ROOT_URLCONF = 'acustica_app.urls'
+ROOT_URLCONF = 'configuration.urls'
 
 TEMPLATES = [
     {
@@ -69,7 +69,7 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = 'acustica_app.wsgi.application'
+WSGI_APPLICATION = 'configuration.wsgi.application'
 
 
 # Database

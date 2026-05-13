@@ -1,5 +1,7 @@
 from django.db import models
 
-# Create your models here.
-class Project(models.Model):
-    name = models.CharField(max_length=200)
+# Aquí definimos los modelos de datos que vamos a usar en la aplicación. En este caso, no tenemos modelos definidos, pero podríamos agregar algunos si necesitamos almacenar información en la base de datos.
+
+
+
+

@@ -1,10 +1,10 @@
 from django.shortcuts import render
 from django.http import HttpResponse, FileResponse
-from .form import FormDeArchivos
+from .forms import FormDeArchivos
 from django.shortcuts import get_object_or_404
 from django.conf import settings
 import os
-import python_code.extraccion_parametros as ep
+from extraccion import services as sc
 import shutil
 
 # Create your views here.
@@ -49,21 +49,22 @@ def get_name(request):
                 for chunk in textgrid_dubitado.chunks():
                     f.write(chunk)
 
-            # Aquí lo gestiona POST o cleanded data
+            # Obtener los demás datos del formulario
             genero_i = form.cleaned_data.get('genero')
             fonema = form.cleaned_data.get('fonema')
             parametros = form.cleaned_data.get('parametros')
-            medida = request.POST.get('medida')
-            intensidad = request.POST.get('intensidad')
+            medida = form.cleaned_data.get('medida')
+            intensidad = form.cleaned_data.get('intensidad')
             espectro = form.cleaned_data.get('espectro')
-
+            # Esta preguntando si esta en lo que marco el usuario entonces que sea True, sino False
             center = 'center' in espectro
             sd = 'sd' in espectro
             sk = 'sk' in espectro
             kur = 'kur' in espectro
 
             # Hace las extracciones sobre los archivos guardados
-            ep.process_sample_separado(temporal_dir, vocales=fonema, genero=genero_i, pitch_mode=medida, intensity_mode=intensidad, center_b=center, sd_b=sd, sk_b=sk, kur_b=kur)
+            # Estamos Haciendo la llamada a la función que hace las extracciones, le pasamos el directorio temporal y los parámetros que el usuario seleccionó en el formulario
+            sc.process_sample_separado(temporal_dir, vocales=fonema, genero=genero_i, pitch_mode=medida, intensity_mode=intensidad, center_b=center, sd_b=sd, sk_b=sk, kur_b=kur)
 
             # Hacer un comprimido para la descarga del CSV 
             zip_path = os.path.join(settings.BASE_DIR, 'extraccion')
@@ -78,7 +79,7 @@ def get_name(request):
             response = HttpResponse(data, content_type='application/zip')
             response['Content-Disposition'] = f'attachment; filename="{filename}"'
             
-            ep.reset_archivos(temporal_dir)
+            sc.reset_archivos(temporal_dir)
 
             return response
 
