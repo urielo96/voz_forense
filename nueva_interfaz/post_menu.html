@@ -1,0 +1,247 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>FORVOZ</title>
+
+    <!-- Bootstrap -->
+    <link
+        href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+        rel="stylesheet">
+
+    <!-- Bootstrap Icons -->
+    <link
+        rel="stylesheet"
+        href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+
+    <!-- Google Fonts -->
+    <link
+        rel="preconnect"
+        href="https://fonts.googleapis.com">
+
+    <link
+        rel="preconnect"
+        href="https://fonts.gstatic.com"
+        crossorigin>
+
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
+    
+    <link rel="stylesheet" href="{% static 'css/menu.css' %}">
+</head>
+
+<body>
+
+<div class="background-waves"></div>
+
+<!-- NAVBAR -->
+<nav class="navbar navbar-expand-lg navbar-modern">
+
+    <div class="container-fluid">
+
+        <!-- LOGO -->
+        <div class="logo-card">
+            <i class="bi bi-soundwave logo-icon"></i>
+            <div class="logo-text">
+                FORVOZ
+            </div>
+        </div>
+
+        <!-- MOBILE BUTTON -->
+        <button
+            class="navbar-toggler"
+            type="button"
+            data-bs-toggle="collapse"
+            data-bs-target="#navbarContent">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <!-- NAV -->
+        <div class="collapse navbar-collapse justify-content-end"
+             id="navbarContent">
+
+            <ul class="navbar-nav align-items-lg-center gap-lg-3">
+
+                <li class="nav-item">
+                    <a class="nav-link nav-link-modern active"
+                       href="#">
+                        <i class="bi bi-house"></i>
+                        Inicio
+                    </a>
+                </li>
+
+                <li class="nav-item">
+                    <a class="nav-link nav-link-modern"
+                        href="#"
+                       onclick="showPanel('about-panel')">
+                        <i class="bi bi-info-circle"></i>
+                        Acerca de
+                    </a>
+                </li>
+
+                <!-- DROPDOWN -->
+                <li class="nav-item dropdown">
+
+                    <a class="nav-link nav-link-modern dropdown-toggle"
+                       href="#"
+                       data-bs-toggle="dropdown">
+                        <i class="bi bi-tools"></i>
+                        Herramienta
+                    </a>
+
+                    <ul class="dropdown-menu dropdown-menu-modern">
+
+                        <li>
+                            <a class="dropdown-item dropdown-item-modern"
+                               href="#"
+                               onclick="showPanel('module1-panel')">
+
+                                <i class="bi bi-soundwave dropdown-icon"></i>
+
+                                <div>
+                                    <strong>Módulo 1</strong>
+                                    <br>Extracción de características
+                                </div>
+                            </a>
+                        </li>
+
+                        <li>
+                            <a class="dropdown-item dropdown-item-modern"
+                               href="#"
+                               onclick="showPanel('module2-panel')">
+
+                                <i class="bi bi-diagram-3 dropdown-icon"></i>
+
+                                <div>
+                                    <strong>Módulo 2</strong><br>
+                                    Implementación de Modelos
+                                </div>
+                            </a>
+                        </li>
+
+                        <li>
+                            <a class="dropdown-item dropdown-item-modern"
+                               href="#"
+                               onclick="showPanel('module3-panel')">
+
+                                <i class="bi bi-bar-chart dropdown-icon"></i>
+
+                                <div>
+                                    <strong>Módulo 3</strong><br>
+                                    Resultados
+                                </div>
+                            </a>
+                        </li>
+
+                    </ul>
+                </li>
+
+                <li class="nav-item">
+                    <a class="nav-link nav-link-modern"
+                       href="#"
+                       onclick="showPanel('participants-panel')">
+                        <i class="bi bi-people"></i>
+                        Participantes
+                    </a>
+                </li>
+
+                <li class="nav-item">
+                    <a class="nav-link nav-link-modern"
+                       href="#"
+                       onclick="showPanel('publications-panel')">
+                        <i class="bi bi-file-earmark-text"></i>
+                        Publicaciones
+                    </a>
+                </li>
+
+            </ul>
+        </div>
+    </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero-section">
+
+    <div>
+
+        <h1 class="hero-title">Herramienta interactiva de comparación forense de voz</h1>
+
+        <h2 class="hero-accent">(FORVOZ)</h2>
+
+        <!-- DYNAMIC PANELS -->
+
+        <div id="about-panel" class="content-panel mx-auto">
+            <h3>Acerca de FORVOZ</h3>
+            <p>Plataforma desarrollada para el análisis, comparación y procesamiento forense de voz.</p>
+        </div>
+
+        <div id="participants-panel" class="content-panel mx-auto">
+            <h3>Participantes</h3>
+        </div>
+
+        <div id="publications-panel" class="content-panel mx-auto">
+            <h3>Publicaciones</h3>
+            <p>Artículos científicos, resultados y documentación.</p>
+        </div>
+
+        <div id="module1-panel" class="content-panel mx-auto">
+            <h3>Módulo 1</h3>
+            <p>Extracción de características.</p>
+        </div>
+
+        <div id="module2-panel" class="content-panel mx-auto">
+            <h3>Módulo 2</h3>
+            <p>Implementación y entrenamiento de modelos.</p>
+        </div>
+
+        <div id="module3-panel" class="content-panel mx-auto">
+            <h3>Módulo 3</h3>
+            <p>Visualización y análisis de resultados.</p>
+        </div>
+
+    </div>
+</section>
+
+<!-- FOOTER -->
+<footer class="footer-modern">
+    <i class="bi bi-shield-check"></i>
+    Copyright © 2024 FORVOZ.
+    Todos los derechos reservados.
+</footer>
+
+<!-- SCRIPT -->
+<script>
+
+    function hideAllPanels() {
+
+        document
+            .querySelectorAll('.content-panel')
+            .forEach(panel => {
+                panel.style.display = 'none';
+            });
+    }
+
+    function showPanel(panelId) {
+
+        hideAllPanels();
+
+        const panel = document.getElementById(panelId);
+
+        if (panel) {
+            panel.style.display = 'block';
+        }
+    }
+
+</script>
+
+<!-- Bootstrap -->
+<script
+src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js">
+</script>
+
+</body>
+</html>
