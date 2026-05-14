@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'extraccion',
+    'gui.apps.GuiConfig',
 ]
 
 MIDDLEWARE = [
