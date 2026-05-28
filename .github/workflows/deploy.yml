@@ -1,0 +1,21 @@
+name: Deploy a producción
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Deploy en VM forVoz
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: 172.16.50.220
+          username: ubuntu
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          script: |
+            cd ~/ForVoz
+            git pull origin main
+            docker compose up -d --build
