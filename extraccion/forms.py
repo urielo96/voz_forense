@@ -2,18 +2,25 @@
 
 from django import forms
 from django.core.validators import FileExtensionValidator
+from django.core.exceptions import ValidationError
 
+
+def validate_textgrid(value):
+    # os.path.splitext('.TextGrid') devuelve ('', '.TextGrid') con extensión vacía
+    # por eso validamos sobre el nombre completo en lugar de solo la extensión
+    if not value.name.lower().endswith('.textgrid'):
+        raise ValidationError('El archivo debe tener extensión .TextGrid')
 
 
 class FormDeArchivos(forms.Form):
 
     # Extracción general
 
-    voz_indubitada = forms.FileField(label="Voz indubitada",validators=[FileExtensionValidator(allowed_extensions=["wav"])]) 
-    textgrid_indubitada = forms.FileField(label="Textgrid indubitada",validators=[FileExtensionValidator(allowed_extensions=["textgrid"])])
+    voz_indubitada = forms.FileField(label="Voz indubitada", validators=[FileExtensionValidator(allowed_extensions=["wav"])])
+    textgrid_indubitada = forms.FileField(label="Textgrid indubitada", validators=[validate_textgrid])
 
-    voz_dubitada = forms.FileField(label="Voz dubitada",validators=[FileExtensionValidator(allowed_extensions=["wav"])])
-    textgrid_dubitada = forms.FileField(label="Textgrid dubitado",validators=[FileExtensionValidator(allowed_extensions=["textgrid"])])
+    voz_dubitada = forms.FileField(label="Voz dubitada", validators=[FileExtensionValidator(allowed_extensions=["wav"])])
+    textgrid_dubitada = forms.FileField(label="Textgrid dubitado", validators=[validate_textgrid])
 
     
     GENERO = (('M', 'M: Masculino'),('F', 'F: Femenino'),('X', 'X: Sin especificar'))
