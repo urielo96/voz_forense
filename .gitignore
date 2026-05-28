@@ -25,3 +25,7 @@ media/
 
 # Sistema operativo
 .DS_Store
+
+# Archivos de diseño
+*.pptx
+*.ppt
