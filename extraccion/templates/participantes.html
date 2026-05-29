@@ -1,0 +1,67 @@
+{% extends "base.html" %}
+
+{% block title %}Participantes{% endblock %}
+
+{% block extra_styles %}
+<style>
+    .page-intro {
+        font-size: 0.92rem;
+        color: #4a6278;
+        margin-bottom: 24px;
+        line-height: 1.6;
+    }
+    .participantes-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+        gap: 20px;
+    }
+    .participante-card {
+        border: 1.5px solid #dde3ea;
+        border-radius: 10px;
+        padding: 20px 16px;
+        text-align: center;
+        background: #f7fafc;
+    }
+    .participante-avatar {
+        width: 64px;
+        height: 64px;
+        border-radius: 50%;
+        background: #4a7c8a;
+        color: #fff;
+        font-size: 1.5rem;
+        font-weight: 700;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 12px;
+    }
+    .participante-nombre {
+        font-weight: 700;
+        font-size: 0.92rem;
+        color: #1a2a4e;
+        margin-bottom: 4px;
+    }
+    .participante-rol {
+        font-size: 0.78rem;
+        color: #5a7080;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<h1 class="page-title">Participantes</h1>
+
+<div class="card">
+    <p class="page-intro">
+        Equipo de investigación y desarrollo del proyecto ForVoz — SELIFO, ENACIF.
+    </p>
+
+    <div class="participantes-grid">
+        <div class="participante-card">
+            <div class="participante-avatar">?</div>
+            <div class="participante-nombre">Por definir</div>
+            <div class="participante-rol">Investigador principal</div>
+        </div>
+    </div>
+</div>
+{% endblock %}

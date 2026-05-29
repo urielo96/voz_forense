@@ -1,28 +1,18 @@
-"""
-URL configuration for acustica_app project.
-
-The `urlpatterns` list routes URLs to views. For more information please see:
-    https://docs.djangoproject.com/en/4.2/topics/http/urls/
-Examples:
-Function views
-    1. Add an import:  from my_app import views
-    2. Add a URL to urlpatterns:  path('', views.home, name='home')
-Class-based views
-    1. Add an import:  from other_app.views import Home
-    2. Add a URL to urlpatterns:  path('', Home.as_view(), name='home')
-Including another URLconf
-    1. Import the include() function: from django.urls import include, path
-    2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
-"""
 from django.contrib import admin
 from django.urls import path
 from extraccion import views
 
 urlpatterns = [
-
-    #Página de inicio  
-    path('', views.get_name, name='extraccion'),
-    
-    # Pagina del admin de django
     path('admin/', admin.site.urls),
+
+    # Páginas informativas
+    path('', views.inicio, name='inicio'),
+    path('acerca/', views.acerca, name='acerca'),
+    path('participantes/', views.participantes, name='participantes'),
+    path('publicaciones/', views.publicaciones, name='publicaciones'),
+
+    # Wizard de extracción (Módulo 1)
+    path('herramienta/', views.frame1, name='frame1'),
+    path('herramienta/fonemas/', views.frame2, name='frame2'),
+    path('herramienta/parametros/', views.frame3, name='frame3'),
 ]

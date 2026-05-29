@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}ForVoz{% endblock %} — ENACIF</title>
+    <link href="https://fonts.googleapis.com/css?family=Roboto:400,500,700&display=swap" rel="stylesheet">
+    <style>
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            font-family: 'Roboto', Arial, sans-serif;
+            background: #f0f2f5;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* ── NAVBAR ── */
+        .navbar {
+            background: #fff;
+            border-bottom: 1px solid #dde3ea;
+            display: flex;
+            align-items: center;
+            padding: 0 32px;
+            height: 64px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+        }
+        .navbar-logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            border: 2px solid #bfcbd6;
+            padding: 6px 14px;
+            border-radius: 6px;
+            font-weight: 700;
+            font-size: 1rem;
+            color: #1a2a4e;
+            text-decoration: none;
+        }
+        .navbar-logo img { height: 36px; display: none; }
+        .navbar-logo img.loaded { display: block; }
+        .navbar-menu {
+            display: flex;
+            gap: 4px;
+            margin-left: auto;
+            list-style: none;
+        }
+        .navbar-menu li a {
+            display: block;
+            padding: 8px 18px;
+            border: 1px solid #bfcbd6;
+            border-radius: 4px;
+            text-decoration: none;
+            color: #1a2a4e;
+            font-size: 0.92rem;
+            font-weight: 500;
+            transition: background 0.15s;
+        }
+        .navbar-menu li a:hover,
+        .navbar-menu li a.active {
+            background: #4a7c8a;
+            color: #fff;
+            border-color: #4a7c8a;
+        }
+
+        /* ── SUBMENU ── */
+        .submenu {
+            background: #fff;
+            border-bottom: 1px solid #dde3ea;
+            display: flex;
+            justify-content: flex-end;
+            padding: 6px 32px;
+        }
+        .submenu span {
+            background: #4a7c8a;
+            color: #fff;
+            font-size: 0.82rem;
+            padding: 4px 16px;
+            border-radius: 4px;
+            font-weight: 500;
+        }
+
+        /* ── STEPPER ── */
+        .stepper-wrap {
+            background: #fff;
+            border-bottom: 1px solid #dde3ea;
+            padding: 16px 32px;
+        }
+        .stepper {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0;
+            max-width: 480px;
+            margin: 0 auto;
+        }
+        .step {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 6px;
+            position: relative;
+            flex: 1;
+        }
+        .step-circle {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            border: 2px solid #bfcbd6;
+            background: #fff;
+            color: #7a90a4;
+            font-weight: 700;
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1;
+            position: relative;
+        }
+        .step.active .step-circle {
+            background: #4a7c8a;
+            border-color: #4a7c8a;
+            color: #fff;
+        }
+        .step.done .step-circle {
+            background: #2e7d4f;
+            border-color: #2e7d4f;
+            color: #fff;
+        }
+        .step-label {
+            font-size: 0.75rem;
+            color: #7a90a4;
+            white-space: nowrap;
+        }
+        .step.active .step-label { color: #4a7c8a; font-weight: 600; }
+        .step.done .step-label { color: #2e7d4f; }
+        .step-line {
+            flex: 1;
+            height: 2px;
+            background: #dde3ea;
+            margin-bottom: 22px;
+        }
+        .step-line.done { background: #2e7d4f; }
+
+        /* ── MAIN ── */
+        main {
+            flex: 1;
+            padding: 32px 32px 24px;
+        }
+        .page-title {
+            font-size: 1.4rem;
+            font-weight: 400;
+            color: #1a2a4e;
+            margin-bottom: 24px;
+        }
+
+        /* ── CARD ── */
+        .card {
+            background: #fff;
+            border-radius: 12px;
+            border: 1px solid #dde3ea;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+            padding: 28px;
+        }
+
+        /* ── SECTION HEADER ── */
+        .section-header {
+            background: #4a7c8a;
+            color: #fff;
+            font-weight: 700;
+            font-size: 0.92rem;
+            padding: 8px 14px;
+            border-radius: 6px;
+            text-align: center;
+            margin-bottom: 14px;
+        }
+        .section-header.salmon { background: #c45c5c; }
+        .section-header.dark { background: #2a5060; }
+
+        /* ── BOTONES NAVEGACIÓN ── */
+        .btn-nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 24px;
+            gap: 12px;
+        }
+        .btn-primary {
+            padding: 10px 32px;
+            background: #4a7c8a;
+            color: #fff;
+            border: none;
+            border-radius: 8px;
+            font-size: 0.95rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: background 0.15s;
+        }
+        .btn-primary:hover { background: #3a6070; }
+        .btn-primary:disabled {
+            background: #bfcbd6;
+            cursor: not-allowed;
+        }
+        .btn-secondary {
+            padding: 10px 24px;
+            background: #fff;
+            color: #4a7c8a;
+            border: 2px solid #4a7c8a;
+            border-radius: 8px;
+            font-size: 0.95rem;
+            font-weight: 600;
+            cursor: pointer;
+            text-decoration: none;
+            transition: background 0.15s;
+        }
+        .btn-secondary:hover { background: #f0f4f7; }
+
+        /* ── ERRORS ── */
+        .errorlist {
+            color: #c45c5c;
+            font-size: 0.8rem;
+            list-style: none;
+            margin-top: 4px;
+        }
+        .alert {
+            background: #fff3cd;
+            border: 1px solid #ffc107;
+            color: #664d03;
+            border-radius: 6px;
+            padding: 10px 14px;
+            font-size: 0.88rem;
+            margin-bottom: 16px;
+        }
+
+        /* ── FOOTER ── */
+        footer {
+            background: #1a2a4e;
+            color: #fff;
+            text-align: center;
+            padding: 14px;
+            font-size: 0.88rem;
+        }
+
+        /* ── RESPONSIVE ── */
+        @media (max-width: 700px) {
+            main { padding: 16px; }
+            .navbar { padding: 0 16px; }
+            .navbar-menu { display: none; }
+            .stepper-wrap { padding: 12px 16px; }
+        }
+    </style>
+    {% block extra_styles %}{% endblock %}
+</head>
+<body>
+
+    <!-- NAVBAR -->
+    <nav class="navbar">
+        <a class="navbar-logo" href="{% url 'frame1' %}">
+            <img src="/static/img/logo_enacif.png" alt="ENACIF" onload="this.classList.add('loaded')">
+            ForVoz
+        </a>
+        <ul class="navbar-menu">
+            <li><a href="{% url 'inicio' %}" {% if request.resolver_match.url_name == 'inicio' %}class="active"{% endif %}>Inicio</a></li>
+            <li><a href="{% url 'acerca' %}" {% if request.resolver_match.url_name == 'acerca' %}class="active"{% endif %}>Acerca de</a></li>
+            <li><a href="{% url 'frame1' %}" {% if request.resolver_match.url_name in 'frame1 frame2 frame3' %}class="active"{% endif %}>Herramienta</a></li>
+            <li><a href="{% url 'participantes' %}" {% if request.resolver_match.url_name == 'participantes' %}class="active"{% endif %}>Participantes</a></li>
+            <li><a href="{% url 'publicaciones' %}" {% if request.resolver_match.url_name == 'publicaciones' %}class="active"{% endif %}>Publicaciones</a></li>
+        </ul>
+    </nav>
+
+    <!-- SUBMENU -->
+    <div class="submenu">
+        <span>Módulo 1. Extracción de características</span>
+    </div>
+
+    <!-- STEPPER -->
+    {% if paso %}
+    <div class="stepper-wrap">
+        <div class="stepper">
+            <div class="step {% if paso == 1 %}active{% elif paso > 1 %}done{% endif %}">
+                <div class="step-circle">{% if paso > 1 %}✓{% else %}1{% endif %}</div>
+                <span class="step-label">Archivos</span>
+            </div>
+            <div class="step-line {% if paso > 1 %}done{% endif %}"></div>
+            <div class="step {% if paso == 2 %}active{% elif paso > 2 %}done{% endif %}">
+                <div class="step-circle">{% if paso > 2 %}✓{% else %}2{% endif %}</div>
+                <span class="step-label">Fonemas</span>
+            </div>
+            <div class="step-line {% if paso > 2 %}done{% endif %}"></div>
+            <div class="step {% if paso == 3 %}active{% endif %}">
+                <div class="step-circle">3</div>
+                <span class="step-label">Parámetros</span>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- MAIN -->
+    <main>
+        {% block content %}{% endblock %}
+    </main>
+
+    <!-- FOOTER -->
+    <footer>
+        Escuela Nacional de Ciencias Forenses &mdash; SELIFO &copy; 2026
+    </footer>
+
+    {% block scripts %}{% endblock %}
+</body>
+</html>

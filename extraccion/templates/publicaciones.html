@@ -1,0 +1,63 @@
+{% extends "base.html" %}
+
+{% block title %}Publicaciones{% endblock %}
+
+{% block extra_styles %}
+<style>
+    .page-intro {
+        font-size: 0.92rem;
+        color: #4a6278;
+        margin-bottom: 24px;
+        line-height: 1.6;
+    }
+    .pub-list {
+        display: flex;
+        flex-direction: column;
+        gap: 16px;
+    }
+    .pub-card {
+        border: 1.5px solid #dde3ea;
+        border-radius: 10px;
+        padding: 18px 20px;
+        background: #f7fafc;
+    }
+    .pub-titulo {
+        font-weight: 700;
+        font-size: 0.95rem;
+        color: #1a2a4e;
+        margin-bottom: 6px;
+    }
+    .pub-autores {
+        font-size: 0.82rem;
+        color: #5a7080;
+        margin-bottom: 4px;
+    }
+    .pub-fuente {
+        font-size: 0.8rem;
+        color: #4a7c8a;
+        font-style: italic;
+    }
+    .empty-state {
+        text-align: center;
+        color: #7a90a4;
+        font-size: 0.92rem;
+        padding: 40px 0;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<h1 class="page-title">Publicaciones</h1>
+
+<div class="card">
+    <p class="page-intro">
+        Artículos, ponencias y trabajos relacionados con el proyecto ForVoz y el análisis acústico forense.
+    </p>
+
+    <div class="pub-list">
+        <div class="empty-state">
+            Las publicaciones se agregarán próximamente.
+        </div>
+    </div>
+</div>
+{% endblock %}

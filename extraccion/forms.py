@@ -1,47 +1,102 @@
-# En este archivo definimos los formularios que vamos a usar en la aplicación. En este caso, tenemos un formulario para subir archivos y seleccionar opciones para la extracción de características de voz.
-
 from django import forms
 from django.core.validators import FileExtensionValidator
 from django.core.exceptions import ValidationError
 
 
 def validate_textgrid(value):
-    # os.path.splitext('.TextGrid') devuelve ('', '.TextGrid') con extensión vacía
-    # por eso validamos sobre el nombre completo en lugar de solo la extensión
     if not value.name.lower().endswith('.textgrid'):
         raise ValidationError('El archivo debe tener extensión .TextGrid')
 
 
-class FormDeArchivos(forms.Form):
+# ── FRAME 1: Subida de archivos ──────────────────────────────────
+class Frame1Form(forms.Form):
+    voz_indubitada = forms.FileField(
+        label="Voz indubitada (.wav)",
+        validators=[FileExtensionValidator(allowed_extensions=['wav'])]
+    )
+    textgrid_indubitada = forms.FileField(
+        label="TextGrid indubitada (.TextGrid)",
+        validators=[validate_textgrid]
+    )
+    voz_dubitada = forms.FileField(
+        label="Voz dubitada (.wav)",
+        validators=[FileExtensionValidator(allowed_extensions=['wav'])]
+    )
+    textgrid_dubitada = forms.FileField(
+        label="TextGrid dubitada (.TextGrid)",
+        validators=[validate_textgrid]
+    )
 
-    # Extracción general
 
-    voz_indubitada = forms.FileField(label="Voz indubitada", validators=[FileExtensionValidator(allowed_extensions=["wav"])])
-    textgrid_indubitada = forms.FileField(label="Textgrid indubitada", validators=[validate_textgrid])
+# ── FRAME 2: Género y fonemas ────────────────────────────────────
+class Frame2Form(forms.Form):
+    GENERO = (
+        ('M', 'Masculino'),
+        ('F', 'Femenino'),
+        ('X', 'Sin especificar'),
+    )
+    genero = forms.ChoiceField(label="Género *", choices=GENERO)
 
-    voz_dubitada = forms.FileField(label="Voz dubitada", validators=[FileExtensionValidator(allowed_extensions=["wav"])])
-    textgrid_dubitada = forms.FileField(label="Textgrid dubitado", validators=[validate_textgrid])
+    FONEMA = (
+        ('a', 'a'),
+        ('e', 'e'),
+        ('i', 'i'),
+        ('o', 'o'),
+        ('u', 'u'),
+        ('s', 's  (espectro)'),
+    )
+    fonema = forms.MultipleChoiceField(
+        label="Fonema *",
+        choices=FONEMA,
+        widget=forms.CheckboxSelectMultiple,
+    )
 
-    
-    GENERO = (('M', 'M: Masculino'),('F', 'F: Femenino'),('X', 'X: Sin especificar'))
-    genero = forms.ChoiceField(label="Género",choices=GENERO)
 
-    # Extracción vocálica
+# ── FRAME 3: Parámetros acústicos (dinámico) ─────────────────────
+class Frame3Form(forms.Form):
+    def __init__(self, *args, tiene_vocales=True, tiene_s=True, **kwargs):
+        super().__init__(*args, **kwargs)
 
-    FONEMA = (('a', 'a'),('e', 'e'),('i', 'i'),('o', 'o'),('u', 'u'))
-    fonema = forms.MultipleChoiceField(choices=FONEMA, widget=forms.CheckboxSelectMultiple)
+        if tiene_vocales:
+            PARAMS = ((0, 'F0'), (1, 'F1'), (2, 'F2'), (3, 'F3'), (4, 'F4'))
+            self.fields['parametros'] = forms.MultipleChoiceField(
+                label="Parámetros vocálicos",
+                choices=PARAMS,
+                widget=forms.CheckboxSelectMultiple,
+                required=False,
+            )
+            MEDIDA = (
+                ('mean',    'Promedio'),
+                ('median',  'Punto medio'),
+                ('maximum', 'Máximo'),
+                ('minimun', 'Mínimo'),
+            )
+            self.fields['medida'] = forms.ChoiceField(
+                label="Métrica de extracción",
+                choices=MEDIDA,
+                widget=forms.RadioSelect(),
+            )
 
-    PARAMS = ((0, 'F0'),(1, 'F1'),(2, 'F2'),(3, 'F3'),(4, 'F4'))
-    parametros = forms.MultipleChoiceField(choices=PARAMS, widget=forms.CheckboxSelectMultiple())
-
-    MEDIDA = (('mean', 'Promedio'),('median', 'Punto medio'),('maximum', 'Máximo'),('minimun', 'Mínimo'))
-    medida = forms.ChoiceField(choices=MEDIDA,widget=forms.RadioSelect())
-
-    # Extracción sonido s
-
-    INTENSIDAD = (('mean', 'Promedio'),('maximum', 'Máximo'))
-    intensidad = forms.ChoiceField(choices=INTENSIDAD,widget=forms.RadioSelect())
-    
-    ESPECTRO = (('center', 'Centro de gravedad'),('sd', 'Desviación estándar'),('sk', 'Asimetría'),('kur','Curtosis'))
-    espectro = forms.MultipleChoiceField(choices=ESPECTRO, widget=forms.CheckboxSelectMultiple())
+        if tiene_s:
+            ESPECTRO = (
+                ('center', 'Centro de gravedad'),
+                ('sd',     'Desviación estándar'),
+                ('sk',     'Asimetría'),
+                ('kur',    'Curtosis'),
+            )
+            self.fields['espectro'] = forms.MultipleChoiceField(
+                label="Parámetros del fonema /s/",
+                choices=ESPECTRO,
+                widget=forms.CheckboxSelectMultiple(),
+                required=False,
+            )
+            INTENSIDAD = (
+                ('mean',    'Promedio'),
+                ('maximum', 'Máximo'),
+            )
+            self.fields['intensidad'] = forms.ChoiceField(
+                label="Intensidad",
+                choices=INTENSIDAD,
+                widget=forms.RadioSelect(),
+            )
 
