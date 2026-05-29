@@ -21,31 +21,46 @@ def _session_dir(request):
     return path
 
 
+_ARCHIVOS_MAP = {
+    'voz_indubitada':      'voz_indubitada.wav',
+    'textgrid_indubitada': 'voz_indubitada.TextGrid',
+    'voz_dubitada':        'voz_dubitada.wav',
+    'textgrid_dubitada':   'voz_dubitada.TextGrid',
+}
+
+
+def _archivos_completos(session_dir):
+    if not session_dir:
+        return False
+    return all(os.path.exists(os.path.join(session_dir, n)) for n in _ARCHIVOS_MAP.values())
+
+
 def frame1(request):
+    session_dir = _session_dir(request) if request.session.get('dir_id') else None
+    ya_cargados = _archivos_completos(session_dir)
+
     if request.method == 'POST':
-        form = Frame1Form(request.POST, request.FILES)
+        form = Frame1Form(request.POST, request.FILES, archivos_existentes=ya_cargados)
         if form.is_valid():
             session_dir = _session_dir(request)
-            archivos = {
-                'voz_indubitada':     'voz_indubitada.wav',
-                'textgrid_indubitada': 'voz_indubitada.TextGrid',
-                'voz_dubitada':       'voz_dubitada.wav',
-                'textgrid_dubitada':  'voz_dubitada.TextGrid',
-            }
-            for campo, nombre in archivos.items():
-                archivo = request.FILES[campo]
-                with open(os.path.join(session_dir, nombre), 'wb') as f:
-                    for chunk in archivo.chunks():
-                        f.write(chunk)
+            nombres_guardados = request.session.get('archivos_nombres', {})
+            for campo, nombre in _ARCHIVOS_MAP.items():
+                if campo in request.FILES:
+                    archivo = request.FILES[campo]
+                    with open(os.path.join(session_dir, nombre), 'wb') as f:
+                        for chunk in archivo.chunks():
+                            f.write(chunk)
+                    nombres_guardados[campo] = archivo.name
+            request.session['archivos_nombres'] = nombres_guardados
             return redirect('frame2')
     else:
-        form = Frame1Form()
+        form = Frame1Form(archivos_existentes=ya_cargados)
 
-    return render(request, 'frame1.html', {'form': form, 'paso': 1})
+    nombres = request.session.get('archivos_nombres', {})
+    return render(request, 'frame1.html', {'form': form, 'paso': 1, 'ya_cargados': ya_cargados, 'nombres': nombres})
 
 
 def frame2(request):
-    # Redirige al inicio si no hay archivos cargados
     if not request.session.get('dir_id'):
         return redirect('frame1')
 
@@ -56,13 +71,17 @@ def frame2(request):
             request.session['fonemas'] = form.cleaned_data['fonema']
             return redirect('frame3')
     else:
-        form = Frame2Form()
+        initial = {}
+        if request.session.get('genero'):
+            initial['genero'] = request.session['genero']
+        if request.session.get('fonemas'):
+            initial['fonema'] = request.session['fonemas']
+        form = Frame2Form(initial=initial)
 
     return render(request, 'frame2.html', {'form': form, 'paso': 2})
 
 
 def frame3(request):
-    # Redirige si falta información de pasos anteriores
     if not request.session.get('dir_id') or not request.session.get('fonemas'):
         return redirect('frame1')
 
@@ -73,6 +92,13 @@ def frame3(request):
     if request.method == 'POST':
         form = Frame3Form(request.POST, tiene_vocales=tiene_vocales, tiene_s=tiene_s)
         if form.is_valid():
+            request.session['frame3_params'] = {
+                'parametros': form.cleaned_data.get('parametros', []),
+                'medida':     form.cleaned_data.get('medida', ''),
+                'espectro':   form.cleaned_data.get('espectro', []),
+                'intensidad': form.cleaned_data.get('intensidad', ''),
+            }
+
             session_dir = _session_dir(request)
             genero = request.session['genero']
             espectro = form.cleaned_data.get('espectro', [])
@@ -97,15 +123,15 @@ def frame3(request):
 
             os.remove(zip_base + '.zip')
             shutil.rmtree(session_dir, ignore_errors=True)
-            del request.session['dir_id']
-            del request.session['fonemas']
-            del request.session['genero']
+            for key in ['dir_id', 'fonemas', 'genero', 'frame3_params']:
+                request.session.pop(key, None)
 
             response = HttpResponse(data, content_type='application/zip')
             response['Content-Disposition'] = 'attachment; filename="extraccion.zip"'
             return response
     else:
-        form = Frame3Form(tiene_vocales=tiene_vocales, tiene_s=tiene_s)
+        initial = request.session.get('frame3_params', {})
+        form = Frame3Form(tiene_vocales=tiene_vocales, tiene_s=tiene_s, initial=initial)
 
     return render(request, 'frame3.html', {
         'form': form,

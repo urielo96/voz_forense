@@ -28,7 +28,7 @@
         border-radius: 50%;
         background: #4a7c8a;
         color: #fff;
-        font-size: 1.5rem;
+        font-size: 1.3rem;
         font-weight: 700;
         display: flex;
         align-items: center;
@@ -44,7 +44,26 @@
     .participante-rol {
         font-size: 0.78rem;
         color: #5a7080;
+        margin-bottom: 2px;
     }
+    .participante-institucion {
+        font-size: 0.75rem;
+        color: #4a7c8a;
+        font-style: italic;
+    }
+
+    /* Separador por sección (ej. "Investigadores", "Desarrollo") */
+    .seccion-titulo {
+        font-size: 0.8rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.06em;
+        color: #4a6278;
+        margin: 28px 0 14px;
+        padding-bottom: 6px;
+        border-bottom: 1px solid #dde3ea;
+    }
+    .seccion-titulo:first-of-type { margin-top: 0; }
 </style>
 {% endblock %}
 
@@ -56,12 +75,59 @@
         Equipo de investigación y desarrollo del proyecto ForVoz — SELIFO, ENACIF.
     </p>
 
+    <!--
+    ══════════════════════════════════════════════════════════════════
+    INSTRUCCIONES PARA EL COLABORADOR
+    ══════════════════════════════════════════════════════════════════
+
+    1. Agrega una tarjeta por cada participante copiando el bloque
+       <div class="participante-card"> ... </div> que aparece abajo.
+
+    2. En "participante-avatar" pon las iniciales del nombre (2 letras).
+       Ejemplo: "Ana Lucía Pérez" → AL
+
+    3. Puedes agrupar por sección usando:
+         <p class="seccion-titulo">Nombre de la sección</p>
+       antes del grupo de tarjetas correspondiente.
+       Ejemplos de sección: Investigación, Desarrollo, Colaboradores externos
+
+    4. Los campos disponibles en cada tarjeta son:
+         - participante-nombre      → nombre completo
+         - participante-rol         → cargo o función en el proyecto
+         - participante-institucion → institución (opcional, puedes borrarlo)
+
+    5. Borra este bloque de comentarios cuando termines.
+    ══════════════════════════════════════════════════════════════════
+    -->
+
+    <!-- EJEMPLO — duplica este bloque para cada participante -->
+    <p class="seccion-titulo">Investigación</p>
     <div class="participantes-grid">
+
         <div class="participante-card">
-            <div class="participante-avatar">?</div>
-            <div class="participante-nombre">Por definir</div>
-            <div class="participante-rol">Investigador principal</div>
+            <div class="participante-avatar">AB</div>
+            <div class="participante-nombre">Nombre Apellido</div>
+            <div class="participante-rol">Rol en el proyecto</div>
+            <div class="participante-institucion">ENACIF — UNAM</div>
         </div>
+
+        <!-- Agrega más tarjetas aquí -->
+
     </div>
+
+    <p class="seccion-titulo">Desarrollo</p>
+    <div class="participantes-grid">
+
+        <div class="participante-card">
+            <div class="participante-avatar">CD</div>
+            <div class="participante-nombre">Nombre Apellido</div>
+            <div class="participante-rol">Rol en el proyecto</div>
+            <div class="participante-institucion">ENACIF — UNAM</div>
+        </div>
+
+        <!-- Agrega más tarjetas aquí -->
+
+    </div>
+
 </div>
 {% endblock %}

@@ -74,6 +74,8 @@ def extract_interval_features_s(sound, intensity, intensity_mode, start, stop, c
     if any([center_b, sd_b, sk_b, kur_b]): #...evitamos que se calcule el espectro si no hay ninguna opcion
         s1=sound.extract_part(from_time=start, to_time=stop)#extraccion de audio del intervalo
         sp1=s1.to_spectrum() # Este valor sólo se utiliza para sacar center, sd, sk, kur
+        center = None
+        sk = None
         if center_b:
             center= parselmouth.praat.call(sp1, "Get centre of gravity",2)
             valores_s.append(center)
@@ -86,6 +88,8 @@ def extract_interval_features_s(sound, intensity, intensity_mode, start, stop, c
         if kur_b:
             kur= parselmouth.praat.call(sp1, "Get kurtosis",2)
             valores_s.append(kur)
+        if center_b and sk_b:
+            valores_s.append(center - (sk / 2))
     
         # Regresa una lista que varía según los valores extraídos
     return ([start, stop, stop-start] + valores_s)
@@ -130,6 +134,8 @@ def process_file(file_path, genero, pitch_mode, formant_mode, intensity_mode, ce
         column_names.append('SK_spectrum')
     if kur_b:
         column_names.append('KUR__spectrum')
+    if center_b and sk_b:
+        column_names.append('Altura_friccion')
 
     word_tier = tg.tierDict[last_tier(file_path)]
 
@@ -195,6 +201,8 @@ def process_file_s(file_path, intensity_mode, center_b, sd_b, sk_b, kur_b):
         column_names.append('SK_spectrum')
     if kur_b:
         column_names.append('KUR__spectrum')
+    if center_b and sk_b:
+        column_names.append('Altura_friccion')
 
     word_tier = tg.tierDict[last_tier(file_path)]
 

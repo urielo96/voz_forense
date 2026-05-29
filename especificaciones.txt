@@ -1,0 +1,96 @@
+ESPECIFICACIONES DEL SISTEMA — ForVoz
+Fuente: pantalla 2a prop-Ajustes.pptx
+======================================
+
+
+FRAME 1 — Subida de archivos (Paso 1 de 3)
+-------------------------------------------
+Campos requeridos:
+  - Archivo .wav de voz dubitada
+  - Archivo .TextGrid de voz dubitada
+  - Archivo .wav de voz indubitada
+  - Archivo .TextGrid de voz indubitada
+
+Comportamiento del botón "Continuar":
+  - Solo se habilita cuando los 4 archivos están cargados.
+  - Si falta al menos uno, debe mostrar un mensaje de alerta indicando
+    cuáles archivos faltan.
+
+Retroalimentación visual al subir archivos:
+  - Palomita verde (✓) si el archivo tiene el formato correcto.
+  - Tache rojo (✗) si el formato no es el requerido.
+
+Tooltip al pasar el mouse:
+  - Al pasar el cursor sobre "Voz dubitada" debe aparecer una definición
+    de qué es la voz dubitada. (texto pendiente de definir)
+  - Al pasar el cursor sobre "Voz indubitada" debe aparecer su definición.
+    (texto pendiente de definir)
+
+Instrucciones al usuario:
+  - Texto de instrucciones pendiente de redactar.
+
+Almacenamiento:
+  - Los archivos deben guardarse en memoria temporal para no consumir
+    almacenamiento permanente del servidor.
+
+
+FRAME 2 — Género y fonemas (Paso 2 de 3)
+-----------------------------------------
+Campos requeridos (marcados con *):
+  - Género del hablante (selección única)
+  - Fonema(s) a analizar (multiselección)
+    Opciones: a, e, i, o, u, s
+
+Comportamiento de navegación:
+  - El botón "Regresar" debe volver al Frame 1 SIN perder lo que el
+    usuario ya seleccionó (guardar en memoria temporal).
+  - Al regresar al Frame 1, los archivos previamente cargados no deben
+    pedirse de nuevo.
+
+Nota sobre el fonema /s/:
+  - El fonema /s/ tiene un tratamiento acústico diferente al de las
+    vocales y debe marcarse/distinguirse visualmente de alguna manera
+    para que el usuario lo note.
+
+Instrucciones al usuario:
+  - "Elige el género y los fonemas."
+
+Lógica de flujo según selección de fonemas:
+  - Si el usuario elige solo vocales (a, e, i, o, u):
+      → Mostrar en Frame 3 únicamente los parámetros vocálicos.
+  - Si el usuario elige solo /s/:
+      → Mostrar en Frame 3 únicamente los parámetros del fonema /s/.
+  - Si el usuario elige vocales Y /s/:
+      → Mostrar en Frame 3 ambos bloques de parámetros.
+
+
+FRAME 3 — Parámetros acústicos (Paso 3 de 3)
+---------------------------------------------
+Este frame cambia según lo seleccionado en el Frame 2.
+
+CASO A — Si se eligió alguna vocal (a, e, i, o, u):
+  Parámetros vocálicos:
+    - Selección de punto de extracción (selección única):
+        Promedio / Punto medio / Máximo / Mínimo
+    - Selección de formantes (multiselección):
+        F0, F1, F2, F3, F4
+
+CASO B — Si se eligió el fonema /s/:
+  Parámetros espectrales (multiselección):
+    - Centro de gravedad
+    - Desviación estándar
+    - Asimetría (en el código: skewness)
+    - Curtosis
+  Parámetro de intensidad (selección única):
+    - Promedio / Máximo
+
+CASO C — Si se eligieron vocales Y /s/:
+  Mostrar ambos bloques (Caso A + Caso B) en el mismo frame.
+
+  Nota: Si el usuario eligió vocales A, B y /s/, el procesamiento
+  ocurre para A y /s/, pero no para B si B no tiene datos. Queda
+  pendiente definir cómo comunicar esto al usuario de forma clara.
+
+
+
+  

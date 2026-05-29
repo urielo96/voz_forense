@@ -27,6 +27,12 @@ class Frame1Form(forms.Form):
         validators=[validate_textgrid]
     )
 
+    def __init__(self, *args, archivos_existentes=False, **kwargs):
+        super().__init__(*args, **kwargs)
+        if archivos_existentes:
+            for field in self.fields.values():
+                field.required = False
+
 
 # ── FRAME 2: Género y fonemas ────────────────────────────────────
 class Frame2Form(forms.Form):

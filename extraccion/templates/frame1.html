@@ -73,14 +73,45 @@
         gap: 8px;
     }
     .file-input-wrap input[type="file"] {
+        position: absolute;
+        opacity: 0;
+        width: 0;
+        height: 0;
+    }
+    .custom-file {
+        display: flex;
+        align-items: center;
         flex: 1;
-        font-size: 0.8rem;
-        padding: 5px 8px;
         border: 1px solid #bfcbd6;
         border-radius: 6px;
         background: #fff;
+        overflow: hidden;
         cursor: pointer;
     }
+    .custom-file:focus-within {
+        border-color: #4a7c8a;
+        outline: 2px solid rgba(74,124,138,0.25);
+    }
+    .custom-file-btn {
+        flex-shrink: 0;
+        background: #eef1f4;
+        border-right: 1px solid #bfcbd6;
+        padding: 5px 10px;
+        font-size: 0.78rem;
+        color: #3a5060;
+        font-weight: 600;
+        white-space: nowrap;
+    }
+    .custom-file-name {
+        flex: 1;
+        padding: 5px 8px;
+        font-size: 0.78rem;
+        color: #5a7080;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+    .custom-file-name.tiene-archivo { color: #1a2a4e; font-weight: 500; }
     .file-status {
         font-size: 1.1rem;
         width: 22px;
@@ -99,6 +130,30 @@
         margin-bottom: 20px;
         line-height: 1.5;
     }
+    .aviso-cargados {
+        background: #eaf5ee;
+        border: 1px solid #2e7d4f;
+        border-radius: 8px;
+        padding: 10px 16px;
+        font-size: 0.85rem;
+        color: #1a4f30;
+        margin-bottom: 16px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+    .aviso-cargados strong { font-weight: 700; }
+    .badge-cargado {
+        display: inline-block;
+        background: #2e7d4f;
+        color: #fff;
+        font-size: 0.72rem;
+        font-weight: 700;
+        border-radius: 10px;
+        padding: 2px 8px;
+        margin-left: 6px;
+        vertical-align: middle;
+    }
     @media (max-width: 600px) {
         .archivos-grid { grid-template-columns: 1fr; }
     }
@@ -113,6 +168,13 @@
         Sube los cuatro archivos correspondientes a la voz dubitada e indubitada.
         Cada voz requiere un archivo <strong>.wav</strong> y un archivo <strong>.TextGrid</strong> generado en Praat.
     </p>
+
+    {% if ya_cargados %}
+    <div class="aviso-cargados">
+        <span>&#10003;</span>
+        <span><strong>Archivos ya cargados.</strong> Puedes continuar o reemplazarlos subiendo nuevos archivos.</span>
+    </div>
+    {% endif %}
 
     {% if form.non_field_errors %}
         <div class="alert">{{ form.non_field_errors }}</div>
@@ -138,10 +200,18 @@
                 </div>
 
                 <div class="file-row">
-                    <label>1) Archivo .wav</label>
+                    <label for="id_voz_indubitada">1) Archivo .wav</label>
                     <div class="file-input-wrap">
                         {{ form.voz_indubitada }}
-                        <span class="file-status" id="status-voz-indubitada"></span>
+                        <div class="custom-file" onclick="document.getElementById('id_voz_indubitada').click()">
+                            <span class="custom-file-btn">Elegir archivo</span>
+                            <span class="custom-file-name {% if nombres.voz_indubitada %}tiene-archivo{% endif %}"
+                                  id="nombre-voz-indubitada">
+                                {{ nombres.voz_indubitada|default:"Sin archivos seleccionados" }}
+                            </span>
+                        </div>
+                        <span class="file-status {% if nombres.voz_indubitada and ya_cargados %}status-ok{% endif %}"
+                              id="status-voz-indubitada">{% if nombres.voz_indubitada and ya_cargados %}✓{% endif %}</span>
                     </div>
                     {% if form.voz_indubitada.errors %}
                         <ul class="errorlist">{% for e in form.voz_indubitada.errors %}<li>{{ e }}</li>{% endfor %}</ul>
@@ -149,10 +219,18 @@
                 </div>
 
                 <div class="file-row">
-                    <label>2) Archivo .TextGrid</label>
+                    <label for="id_textgrid_indubitada">2) Archivo .TextGrid</label>
                     <div class="file-input-wrap">
                         {{ form.textgrid_indubitada }}
-                        <span class="file-status" id="status-textgrid-indubitada"></span>
+                        <div class="custom-file" onclick="document.getElementById('id_textgrid_indubitada').click()">
+                            <span class="custom-file-btn">Elegir archivo</span>
+                            <span class="custom-file-name {% if nombres.textgrid_indubitada %}tiene-archivo{% endif %}"
+                                  id="nombre-textgrid-indubitada">
+                                {{ nombres.textgrid_indubitada|default:"Sin archivos seleccionados" }}
+                            </span>
+                        </div>
+                        <span class="file-status {% if nombres.textgrid_indubitada and ya_cargados %}status-ok{% endif %}"
+                              id="status-textgrid-indubitada">{% if nombres.textgrid_indubitada and ya_cargados %}✓{% endif %}</span>
                     </div>
                     {% if form.textgrid_indubitada.errors %}
                         <ul class="errorlist">{% for e in form.textgrid_indubitada.errors %}<li>{{ e }}</li>{% endfor %}</ul>
@@ -173,10 +251,18 @@
                 </div>
 
                 <div class="file-row">
-                    <label>1) Archivo .wav</label>
+                    <label for="id_voz_dubitada">1) Archivo .wav</label>
                     <div class="file-input-wrap">
                         {{ form.voz_dubitada }}
-                        <span class="file-status" id="status-voz-dubitada"></span>
+                        <div class="custom-file" onclick="document.getElementById('id_voz_dubitada').click()">
+                            <span class="custom-file-btn">Elegir archivo</span>
+                            <span class="custom-file-name {% if nombres.voz_dubitada %}tiene-archivo{% endif %}"
+                                  id="nombre-voz-dubitada">
+                                {{ nombres.voz_dubitada|default:"Sin archivos seleccionados" }}
+                            </span>
+                        </div>
+                        <span class="file-status {% if nombres.voz_dubitada and ya_cargados %}status-ok{% endif %}"
+                              id="status-voz-dubitada">{% if nombres.voz_dubitada and ya_cargados %}✓{% endif %}</span>
                     </div>
                     {% if form.voz_dubitada.errors %}
                         <ul class="errorlist">{% for e in form.voz_dubitada.errors %}<li>{{ e }}</li>{% endfor %}</ul>
@@ -184,10 +270,18 @@
                 </div>
 
                 <div class="file-row">
-                    <label>2) Archivo .TextGrid</label>
+                    <label for="id_textgrid_dubitada">2) Archivo .TextGrid</label>
                     <div class="file-input-wrap">
                         {{ form.textgrid_dubitada }}
-                        <span class="file-status" id="status-textgrid-dubitada"></span>
+                        <div class="custom-file" onclick="document.getElementById('id_textgrid_dubitada').click()">
+                            <span class="custom-file-btn">Elegir archivo</span>
+                            <span class="custom-file-name {% if nombres.textgrid_dubitada %}tiene-archivo{% endif %}"
+                                  id="nombre-textgrid-dubitada">
+                                {{ nombres.textgrid_dubitada|default:"Sin archivos seleccionados" }}
+                            </span>
+                        </div>
+                        <span class="file-status {% if nombres.textgrid_dubitada and ya_cargados %}status-ok{% endif %}"
+                              id="status-textgrid-dubitada">{% if nombres.textgrid_dubitada and ya_cargados %}✓{% endif %}</span>
                     </div>
                     {% if form.textgrid_dubitada.errors %}
                         <ul class="errorlist">{% for e in form.textgrid_dubitada.errors %}<li>{{ e }}</li>{% endfor %}</ul>
@@ -211,40 +305,41 @@
 {% block scripts %}
 <script>
     const campos = [
-        { inputId: 'id_voz_indubitada',     statusId: 'status-voz-indubitada',     ext: '.wav' },
-        { inputId: 'id_textgrid_indubitada', statusId: 'status-textgrid-indubitada', ext: '.textgrid' },
-        { inputId: 'id_voz_dubitada',        statusId: 'status-voz-dubitada',        ext: '.wav' },
-        { inputId: 'id_textgrid_dubitada',   statusId: 'status-textgrid-dubitada',   ext: '.textgrid' },
+        { inputId: 'id_voz_indubitada',     nombreId: 'nombre-voz-indubitada',     statusId: 'status-voz-indubitada',     ext: '.wav' },
+        { inputId: 'id_textgrid_indubitada', nombreId: 'nombre-textgrid-indubitada', statusId: 'status-textgrid-indubitada', ext: '.textgrid' },
+        { inputId: 'id_voz_dubitada',        nombreId: 'nombre-voz-dubitada',        statusId: 'status-voz-dubitada',       ext: '.wav' },
+        { inputId: 'id_textgrid_dubitada',   nombreId: 'nombre-textgrid-dubitada',   statusId: 'status-textgrid-dubitada',  ext: '.textgrid' },
     ];
+    const yaExisten = {{ ya_cargados|yesno:"true,false" }};
 
     function revisarArchivo(campo) {
-        const input  = document.getElementById(campo.inputId);
-        const status = document.getElementById(campo.statusId);
-        const file   = input.files[0];
+        const input   = document.getElementById(campo.inputId);
+        const status  = document.getElementById(campo.statusId);
+        const nombreEl = document.getElementById(campo.nombreId);
+        const file    = input.files[0];
 
         if (!file) {
-            status.textContent = '';
-            return false;
+            return yaExisten;
         }
 
-        const nombre = file.name.toLowerCase();
-        const ok = nombre.endsWith(campo.ext);
+        // Actualiza el nombre mostrado en el input custom
+        nombreEl.textContent = file.name;
+        nombreEl.classList.add('tiene-archivo');
+
+        const ok = file.name.toLowerCase().endsWith(campo.ext);
         status.textContent = ok ? '✓' : '✗';
         status.className   = 'file-status ' + (ok ? 'status-ok' : 'status-error');
         return ok;
     }
 
     function actualizarBoton() {
-        const todosOk = campos.every(c => revisarArchivo(c));
-        document.getElementById('btn-continuar').disabled = !todosOk;
+        document.getElementById('btn-continuar').disabled = !campos.every(c => revisarArchivo(c));
     }
 
     campos.forEach(c => {
-        const input = document.getElementById(c.inputId);
-        input.addEventListener('change', actualizarBoton);
+        document.getElementById(c.inputId).addEventListener('change', actualizarBoton);
     });
 
-    // Si hubo error de servidor y los campos tienen valor, revisar al cargar
     window.addEventListener('load', actualizarBoton);
 </script>
 {% endblock %}
