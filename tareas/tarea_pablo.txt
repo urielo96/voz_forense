@@ -75,6 +75,11 @@ los colores genéricos por los colores de la UNAM:
     #eaf3f5  (fondo claro)→  #e8eef8  (azul claro UNAM)
     #f0f6f8  (fondo suave)→  #edf1fa  (azul muy claro UNAM)
 
+    Acentos
+    ─────────────────────────────────────────────
+    #acadad  (Plata UNAM)
+    #b59a5a  (Dorado UNAM)
+
 Si el equipo decide usar el dorado UNAM (#b59a5a) para algún acento
 (por ejemplo los headers de sección), también puedes aplicarlo.
 
