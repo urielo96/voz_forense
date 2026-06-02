@@ -10,7 +10,7 @@
 
         body {
             font-family: 'Roboto', Arial, sans-serif;
-            background: #f0f2f5;
+            background: #edf1fa;
             min-height: 100vh;
             display: flex;
             flex-direction: column;
@@ -18,8 +18,8 @@
 
         /* ── NAVBAR ── */
         .navbar {
-            background: #fff;
-            border-bottom: 1px solid #dde3ea;
+            background: #ffffff;
+            border-bottom: 1px solid #ffffff;
             display: flex;
             align-items: center;
             padding: 0 32px;
@@ -30,12 +30,13 @@
             display: flex;
             align-items: center;
             gap: 10px;
-            border: 2px solid #bfcbd6;
+            margin-right: 32px;
+            border: 2px solid #acadad;
             padding: 6px 14px;
             border-radius: 6px;
             font-weight: 700;
             font-size: 1rem;
-            color: #1a2a4e;
+            color: #001a3e;
             text-decoration: none;
         }
         .navbar-logo img { height: 36px; display: none; }
@@ -49,31 +50,35 @@
         .navbar-menu li a {
             display: block;
             padding: 8px 18px;
-            border: 1px solid #bfcbd6;
+            border: 1px solid #ffffff;
             border-radius: 4px;
             text-decoration: none;
-            color: #1a2a4e;
+            color: #001a3e;
             font-size: 0.92rem;
             font-weight: 500;
             transition: background 0.15s;
         }
-        .navbar-menu li a:hover,
-        .navbar-menu li a.active {
-            background: #4a7c8a;
+        .navbar-menu li a:hover{
+            background: #b59a5a;
             color: #fff;
-            border-color: #4a7c8a;
+            border-color: #6e7271;
+        }
+        .navbar-menu li a.active {
+            background: #002d6b;
+            color: #fff;
+            border-color: #6e7271;
         }
 
         /* ── SUBMENU ── */
         .submenu {
             background: #fff;
-            border-bottom: 1px solid #dde3ea;
+            border-bottom: 1px solid #acadad;
             display: flex;
             justify-content: flex-end;
             padding: 6px 32px;
         }
         .submenu span {
-            background: #4a7c8a;
+            background: #929292;
             color: #fff;
             font-size: 0.82rem;
             padding: 4px 16px;
@@ -119,8 +124,8 @@
             position: relative;
         }
         .step.active .step-circle {
-            background: #4a7c8a;
-            border-color: #4a7c8a;
+            background: #b59a5a;
+            border-color: #acadad;
             color: #fff;
         }
         .step.done .step-circle {
@@ -133,7 +138,7 @@
             color: #7a90a4;
             white-space: nowrap;
         }
-        .step.active .step-label { color: #4a7c8a; font-weight: 600; }
+        .step.active .step-label { color: #001a3e; font-weight: 600; }
         .step.done .step-label { color: #2e7d4f; }
         .step-line {
             flex: 1;
@@ -151,7 +156,7 @@
         .page-title {
             font-size: 1.4rem;
             font-weight: 400;
-            color: #1a2a4e;
+            color: #001a3e;
             margin-bottom: 24px;
         }
 
@@ -166,7 +171,7 @@
 
         /* ── SECTION HEADER ── */
         .section-header {
-            background: #4a7c8a;
+            background: #001a3e;
             color: #fff;
             font-weight: 700;
             font-size: 0.92rem;
@@ -176,7 +181,7 @@
             margin-bottom: 14px;
         }
         .section-header.salmon { background: #c45c5c; }
-        .section-header.dark { background: #2a5060; }
+        .section-header.dark { background: #002050; }
 
         /* ── BOTONES NAVEGACIÓN ── */
         .btn-nav {
@@ -188,7 +193,7 @@
         }
         .btn-primary {
             padding: 10px 32px;
-            background: #4a7c8a;
+            background: #003f8a;
             color: #fff;
             border: none;
             border-radius: 8px;
@@ -197,7 +202,7 @@
             cursor: pointer;
             transition: background 0.15s;
         }
-        .btn-primary:hover { background: #3a6070; }
+        .btn-primary:hover { background: #002d6b; }
         .btn-primary:disabled {
             background: #bfcbd6;
             cursor: not-allowed;
@@ -205,8 +210,8 @@
         .btn-secondary {
             padding: 10px 24px;
             background: #fff;
-            color: #4a7c8a;
-            border: 2px solid #4a7c8a;
+            color: #003f8a;
+            border: 2px solid #003f8a;
             border-radius: 8px;
             font-size: 0.95rem;
             font-weight: 600;
@@ -235,7 +240,7 @@
 
         /* ── FOOTER ── */
         footer {
-            background: #1a2a4e;
+            background: #001a3e;
             color: #fff;
             text-align: center;
             padding: 14px;
@@ -257,7 +262,7 @@
     <!-- NAVBAR -->
     <nav class="navbar">
         <a class="navbar-logo" href="{% url 'frame1' %}">
-            <img src="/static/img/logo_enacif.png" alt="ENACIF" onload="this.classList.add('loaded')">
+            <img src="/static/img/Logos_unam_Enacif.png" alt="ENACIF" onload="this.classList.add('loaded')">
             ForVoz
         </a>
         <ul class="navbar-menu">
