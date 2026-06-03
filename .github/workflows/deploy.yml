@@ -12,7 +12,7 @@ jobs:
       - name: Deploy en VM forVoz
         uses: appleboy/ssh-action@v1.0.3
         with:
-          host: 172.16.50.220
+          host: voz.enacif.unam.mx
           username: ubuntu
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           script: |
