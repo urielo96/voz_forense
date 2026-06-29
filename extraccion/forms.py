@@ -69,7 +69,8 @@ class Frame3Form(forms.Form):
                 label="Parámetros vocálicos",
                 choices=PARAMS,
                 widget=forms.CheckboxSelectMultiple,
-                required=False,
+                required=True,
+                error_messages={'required': 'Selecciona al menos un parámetro vocálico (F0–F4).'},
             )
             MEDIDA = (
                 ('mean',    'Promedio'),
@@ -89,6 +90,7 @@ class Frame3Form(forms.Form):
                 ('sd',     'Desviación estándar'),
                 ('sk',     'Asimetría'),
                 ('kur',    'Curtosis'),
+                ('alt',    'Altura de la fricción'),
             )
             self.fields['espectro'] = forms.MultipleChoiceField(
                 label="Parámetros del fonema /s/",
@@ -99,10 +101,11 @@ class Frame3Form(forms.Form):
             INTENSIDAD = (
                 ('mean',    'Promedio'),
                 ('maximum', 'Máximo'),
+                ('minimum', 'Mínimo'),
             )
-            self.fields['intensidad'] = forms.ChoiceField(
+            self.fields['intensidad'] = forms.MultipleChoiceField(
                 label="Intensidad",
                 choices=INTENSIDAD,
-                widget=forms.RadioSelect(),
+                widget=forms.CheckboxSelectMultiple(),
             )
 

@@ -96,23 +96,33 @@ def frame3(request):
                 'parametros': form.cleaned_data.get('parametros', []),
                 'medida':     form.cleaned_data.get('medida', ''),
                 'espectro':   form.cleaned_data.get('espectro', []),
-                'intensidad': form.cleaned_data.get('intensidad', ''),
+                'intensidad': form.cleaned_data.get('intensidad', []),
             }
 
             session_dir = _session_dir(request)
             genero = request.session['genero']
             espectro = form.cleaned_data.get('espectro', [])
 
+            # Formantes seleccionados: F0 es el pitch; F1-F4 son formantes
+            parametros = form.cleaned_data.get('parametros', [])
+            incluir_pitch = '0' in parametros
+            formant_mode = [int(p) for p in parametros if p != '0']
+
             sc.process_sample_separado(
                 session_dir,
                 vocales=fonemas,
                 genero=genero,
                 pitch_mode=form.cleaned_data.get('medida', 'mean'),
-                intensity_mode=form.cleaned_data.get('intensidad', 'mean'),
+                formant_mode=formant_mode,
+                incluir_pitch=incluir_pitch,
+                intensity_modes=form.cleaned_data.get('intensidad', []),
                 center_b='center' in espectro,
                 sd_b='sd' in espectro,
                 sk_b='sk' in espectro,
                 kur_b='kur' in espectro,
+                alt_b='alt' in espectro,
+                gen_vocal=tiene_vocales,
+                gen_s=tiene_s,
             )
 
             zip_base = os.path.join(settings.BASE_DIR, 'temporal_file_storage', request.session['dir_id'] + '_result')

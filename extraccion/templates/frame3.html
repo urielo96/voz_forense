@@ -190,13 +190,14 @@
                 {% if form.intensidad.errors %}
                     <ul class="errorlist">{% for e in form.intensidad.errors %}<li>{{ e }}</li>{% endfor %}</ul>
                 {% endif %}
-                <div class="radio-group">
+                <div class="chip-group">
                     {% for value, label in form.intensidad.field.choices %}
-                    <label>
-                        <input type="radio" name="intensidad" value="{{ value }}"
-                            {% if form.intensidad.value == value %}checked{% endif %}>
-                        {{ label }}
-                    </label>
+                    <div class="chip-item">
+                        <input type="checkbox" name="intensidad" value="{{ value }}"
+                            id="int_{{ value }}"
+                            {% if value in form.intensidad.value %}checked{% endif %}>
+                        <label for="int_{{ value }}">{{ label }}</label>
+                    </div>
                     {% endfor %}
                 </div>
             </div>
@@ -220,6 +221,7 @@
 
     {% if tiene_vocales %}
     const radiosMedida = document.querySelectorAll('input[name="medida"]');
+    const checksFormantes = document.querySelectorAll('input[name="parametros"]');
     {% endif %}
     {% if tiene_s %}
     const radiosIntensidad = document.querySelectorAll('input[name="intensidad"]');
@@ -229,6 +231,7 @@
         let ok = true;
         {% if tiene_vocales %}
         ok = ok && [...radiosMedida].some(r => r.checked);
+        ok = ok && [...checksFormantes].some(c => c.checked);
         {% endif %}
         {% if tiene_s %}
         ok = ok && [...radiosIntensidad].some(r => r.checked);
@@ -238,6 +241,7 @@
 
     {% if tiene_vocales %}
     radiosMedida.forEach(r => r.addEventListener('change', actualizar));
+    checksFormantes.forEach(c => c.addEventListener('change', actualizar));
     {% endif %}
     {% if tiene_s %}
     radiosIntensidad.forEach(r => r.addEventListener('change', actualizar));
