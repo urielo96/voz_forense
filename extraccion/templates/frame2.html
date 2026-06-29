@@ -39,17 +39,17 @@
         background: #fff;
         cursor: pointer;
         font-size: 0.9rem;
-        color: #001a3e;
+        color: #2b3132;
         transition: border-color 0.15s, background 0.15s;
     }
     .genero-opciones label:hover {
-        border-color: #003f8a;
+        border-color: #7F9297;
         background: #edf1fa;
     }
-    .genero-opciones input[type="radio"] { accent-color: #003f8a; width: 16px; height: 16px; }
-    .genero-opciones input[type="radio"]:checked + span { font-weight: 600; color: #003f8a; }
+    .genero-opciones input[type="radio"] { accent-color: #7F9297; width: 16px; height: 16px; }
+    .genero-opciones input[type="radio"]:checked + span { font-weight: 600; color: #2b3132; }
     .genero-opciones label:has(input:checked) {
-        border-color: #003f8a;
+        border-color: #7F9297;
         background: #e8eef8;
     }
 
@@ -148,7 +148,7 @@
 
             <!-- Género -->
             <div class="opcion-box">
-                <div class="section-header">Género del hablante *</div>
+                <div class="section-header neutral">Género del hablante *</div>
 
                 {% if form.genero.errors %}
                     <ul class="errorlist">{% for e in form.genero.errors %}<li>{{ e }}</li>{% endfor %}</ul>
@@ -202,7 +202,7 @@
                     <div class="fonema-chip fonema-s">
                         <input type="checkbox" name="fonema" value="s" id="f_s"
                             {% if 's' in form.fonema.value %}checked{% endif %}>
-                        <label for="f_s">/s/<span class="chip-sub">espectro</span></label>
+                        <label for="f_s">/s/</label>
                     </div>
                 </div>
             </div>

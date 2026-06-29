@@ -11,6 +11,8 @@
         body {
             font-family: 'Roboto', Arial, sans-serif;
             background: #edf1fa;
+            background-image: url('/static/img/background.jpg');
+            background-size: cover;
             min-height: 100vh;
             display: flex;
             flex-direction: column;
@@ -22,8 +24,8 @@
             border-bottom: 1px solid #ffffff;
             display: flex;
             align-items: center;
-            padding: 0 32px;
-            height: 64px;
+            padding: 0px 32px;
+            height: 104px;
             box-shadow: 0 2px 8px rgba(0,0,0,0.06);
         }
         .navbar-logo {
@@ -31,15 +33,22 @@
             align-items: center;
             gap: 10px;
             margin-right: 32px;
-            border: 2px solid #acadad;
             padding: 6px 14px;
             border-radius: 6px;
-            font-weight: 700;
+            font-weight: 600;
             font-size: 1rem;
             color: #001a3e;
             text-decoration: none;
         }
-        .navbar-logo img { height: 36px; display: none; }
+        .navbar-logo .sub {
+            padding: 0px;
+            align-items: center;
+            font-size: 0.8rem;
+            font-weight: 300;
+            margin-left: 36px;
+            color: #7a90a4;
+        }
+        .navbar-logo img { height: 60px; display: none; }
         .navbar-logo img.loaded { display: block; }
         .navbar-menu {
             display: flex;
@@ -182,6 +191,7 @@
         }
         .section-header.salmon { background: #c45c5c; }
         .section-header.dark { background: #002050; }
+        .section-header.neutral { background: #2b3132; }
 
         /* ── BOTONES NAVEGACIÓN ── */
         .btn-nav {
@@ -261,9 +271,12 @@
 
     <!-- NAVBAR -->
     <nav class="navbar">
-        <a class="navbar-logo" href="{% url 'frame1' %}">
+        <a class="navbar-logo" href="{% url 'inicio' %}">
             <img src="/static/img/Logos_unam_Enacif.png" alt="ENACIF" onload="this.classList.add('loaded')">
-            ForVoz
+        <div class="d-flex align-items-center">
+            <div class="navbar-logo">ESCUELA NACIONAL DE CIENCIAS FORENSES</div>
+            <div class="navbar-logo sub">UNIVERSIDAD NACIONAL AUTÓNOMA DE MÉXICO</div>
+        </div>
         </a>
         <ul class="navbar-menu">
             <li><a href="{% url 'inicio' %}" {% if request.resolver_match.url_name == 'inicio' %}class="active"{% endif %}>Inicio</a></li>

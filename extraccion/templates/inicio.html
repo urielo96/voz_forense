@@ -59,6 +59,9 @@
         color: #5a7080;
         line-height: 1.5;
     }
+    .feature-card img{
+        height: 64px;
+    }
 
     @media (max-width: 700px) {
         .features { grid-template-columns: 1fr; }
@@ -70,6 +73,7 @@
 {% block content %}
 <div class="hero">
     <h2>ForVoz — Herramienta de análisis acústico forense</h2>
+
     <p>
         ForVoz es una plataforma desarrollada por el SELIFO de la Escuela Nacional de Ciencias Forenses (ENACIF)
         para la extracción automatizada de parámetros acústicos en estudios de comparación de voz.
@@ -79,14 +83,17 @@
 
 <div class="features">
     <div class="feature-card">
+        <img src="/static/img/upload_icon.webp" alt="upload_icon" onload="this.classList.add('loaded')">
         <h3>Carga de archivos</h3>
         <p>Sube archivos .wav y .TextGrid de Praat para las muestras dubitada e indubitada.</p>
     </div>
     <div class="feature-card">
+        <img src="/static/img/pulse_icon.webp" alt="pulse_icon" onload="this.classList.add('loaded')">
         <h3>Extracción de parámetros</h3>
         <p>Obtén formantes (F0–F4), medidas espectrales del fonema /s/ e intensidad en segundos.</p>
     </div>
     <div class="feature-card">
+        <img src="/static/img/document_icon.webp" alt="document_icon" onload="this.classList.add('loaded')">
         <h3>Resultados descargables</h3>
         <p>Recibe un archivo .zip con los datos extraídos listos para análisis estadístico.</p>
     </div>
