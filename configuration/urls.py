@@ -13,6 +13,7 @@ urlpatterns = [
 
     # Wizard de extracción (Módulo 1)
     path('herramienta/', views.frame1, name='frame1'),
+    path('herramienta/ejemplo/', views.cargar_ejemplo, name='cargar_ejemplo'),
     path('herramienta/fonemas/', views.frame2, name='frame2'),
     path('herramienta/parametros/', views.frame3, name='frame3'),
 ]

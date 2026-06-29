@@ -333,10 +333,18 @@ def process_sample_separado(directory,vocales = ['a','e','i','o','u'],genero='X'
         partes.extend(general_s)
     if partes:
         df_completo = pd.concat(partes, ignore_index=True)
-        # Ordenar columnas: metadata, luego las demás según aparecen (vocales y /s/)
+        # Ordenar columnas: metadata, vocales (F0-F4), espectrales y al final las
+        # de intensidad.
         meta = ['name', 'Label', 'Start', 'Stop', 'Duration']
-        resto = [c for c in df_completo.columns if c not in meta]
-        df_completo = df_completo[meta + resto]
+        espectral_orden = ['Centro de gravedad', 'Desviación estándar', 'Asimetría', 'Curtosis', 'Altura de la fricción']
+        intensidad_orden = list(INTENSIDAD_LABELS.values())
+        cols = list(df_completo.columns)
+        vocal_cols = [c for c in cols if c not in meta and c not in espectral_orden and c not in intensidad_orden]
+        orden = (meta
+                 + vocal_cols
+                 + [c for c in espectral_orden if c in cols]
+                 + [c for c in intensidad_orden if c in cols])
+        df_completo = df_completo[orden]
         # Ordenar filas por archivo y tiempo para que ambas voces queden legibles
         df_completo = df_completo.sort_values(['name', 'Start']).reset_index(drop=True)
         df_completo.to_csv(os.path.join(directory, "General_Completo.csv"), index=False)
