@@ -7,15 +7,15 @@ on:
 
 jobs:
   deploy:
-    runs-on: ubuntu-latest
+    # Corre en el runner self-hosted instalado en la VM voz-forense (172.16.50.220),
+    # porque el servidor no es accesible por SSH desde los runners de GitHub.
+    runs-on: self-hosted
     steps:
-      - name: Deploy en VM forVoz
-        uses: appleboy/ssh-action@v1.0.3
-        with:
-          host: voz.enacif.unam.mx
-          username: ubuntu
-          key: ${{ secrets.SSH_PRIVATE_KEY }}
-          script: |
-            cd ~/ForVoz
-            git pull origin main
-            docker compose up -d --build
+      - name: Actualizar código y reconstruir contenedor
+        run: |
+          cd /home/ubuntu/ForVoz
+          git fetch origin
+          git checkout main
+          git reset --hard origin/main
+          docker compose up -d --build
+          docker image prune -f
