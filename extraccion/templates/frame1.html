@@ -292,13 +292,17 @@
         </div>
 
         <div class="btn-nav">
-            <span></span>
+            <a href="{% url 'cargar_ejemplo' %}" class="btn-secondary">Usar audios de ejemplo</a>
             <button type="submit" class="btn-primary" id="btn-continuar" disabled>
                 Continuar →
             </button>
         </div>
 
     </form>
+
+    <p style="text-align:center; font-size:0.8rem; color:#5a7080; margin-top:14px;">
+        ¿No tienes archivos? Usa los <strong>audios de ejemplo</strong> para probar la herramienta.
+    </p>
 </div>
 {% endblock %}
 
