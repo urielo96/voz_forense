@@ -96,13 +96,7 @@ class Frame3Form(forms.Form):
                 widget=forms.CheckboxSelectMultiple(),
                 required=False,
             )
-            INTENSIDAD = (
-                ('mean',    'Promedio'),
-                ('maximum', 'Máximo'),
-            )
-            self.fields['intensidad'] = forms.ChoiceField(
-                label="Intensidad",
-                choices=INTENSIDAD,
-                widget=forms.RadioSelect(),
-            )
+            # Métrica de intensidad descartada (campo retirado del Paso 3).
+            # La vista hace form.cleaned_data.get('intensidad', []), así que
+            # sin el campo simplemente no se generan columnas de intensidad.
 
