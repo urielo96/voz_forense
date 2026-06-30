@@ -8,6 +8,7 @@ on:
 jobs:
   deploy:
     runs-on: ubuntu-latest
+    needs: test        # espera a que el job 'test' del workflow de tests pase
     steps:
       - name: Deploy en VM forVoz
         uses: appleboy/ssh-action@v1.0.3
