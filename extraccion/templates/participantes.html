@@ -23,17 +23,31 @@
         background: #f7fafc;
     }
     .participante-avatar {
-        width: 64px;
-        height: 64px;
+        width: 96px;
+        height: 96px;
         border-radius: 50%;
         background: #003f8a;
         color: #fff;
-        font-size: 1.3rem;
+        font-size: 1.6rem;
         font-weight: 700;
         display: flex;
         align-items: center;
         justify-content: center;
         margin: 0 auto 12px;
+        overflow: hidden;
+    }
+    .participante-avatar img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        display: block;
+    }
+    /* Avatar de marcador para fotos aún no disponibles */
+    .participante-avatar.pendiente { background: #bfcbd6; color: #5a7080; }
+    .foto-pendiente {
+        font-size: 0.72rem;
+        color: #7a90a4;
+        font-style: italic;
     }
     .participante-nombre {
         font-weight: 700;
@@ -75,43 +89,29 @@
         Equipo de investigación y desarrollo del proyecto ForVoz — SELIFO, ENACIF.
     </p>
 
-    <!--
-    ══════════════════════════════════════════════════════════════════
-    INSTRUCCIONES PARA EL COLABORADOR
-    ══════════════════════════════════════════════════════════════════
-
-    1. Agrega una tarjeta por cada participante copiando el bloque
-       <div class="participante-card"> ... </div> que aparece abajo.
-
-    2. En "participante-avatar" pon las iniciales del nombre (2 letras).
-       Ejemplo: "Ana Lucía Pérez" → AL
-
-    3. Puedes agrupar por sección usando:
-         <p class="seccion-titulo">Nombre de la sección</p>
-       antes del grupo de tarjetas correspondiente.
-       Ejemplos de sección: Investigación, Desarrollo, Colaboradores externos
-
-    4. Los campos disponibles en cada tarjeta son:
-         - participante-nombre      → nombre completo
-         - participante-rol         → cargo o función en el proyecto
-         - participante-institucion → institución (opcional, puedes borrarlo)
-
-    5. Borra este bloque de comentarios cuando termines.
-    ══════════════════════════════════════════════════════════════════
-    -->
-
-    <!-- EJEMPLO — duplica este bloque para cada participante -->
     <p class="seccion-titulo">Investigación</p>
     <div class="participantes-grid">
 
         <div class="participante-card">
-            <div class="participante-avatar">AB</div>
-            <div class="participante-nombre">Nombre Apellido</div>
-            <div class="participante-rol">Rol en el proyecto</div>
-            <div class="participante-institucion">ENACIF — UNAM</div>
+            <div class="participante-avatar">
+                <img src="/static/img/participantes/fernanda.png" alt="Fernanda">
+            </div>
+            <div class="participante-nombre">Fernanda</div>
         </div>
 
-        <!-- Agrega más tarjetas aquí -->
+        <div class="participante-card">
+            <div class="participante-avatar">
+                <img src="/static/img/participantes/julio-cesar.jpg" alt="Julio César">
+            </div>
+            <div class="participante-nombre">Julio César</div>
+        </div>
+
+        <div class="participante-card">
+            <div class="participante-avatar">
+                <img src="/static/img/participantes/sofia.jpg" alt="Sofía">
+            </div>
+            <div class="participante-nombre">Sofía</div>
+        </div>
 
     </div>
 
@@ -119,13 +119,23 @@
     <div class="participantes-grid">
 
         <div class="participante-card">
-            <div class="participante-avatar">CD</div>
-            <div class="participante-nombre">Nombre Apellido</div>
-            <div class="participante-rol">Rol en el proyecto</div>
-            <div class="participante-institucion">ENACIF — UNAM</div>
+            <div class="participante-avatar">
+                <img src="/static/img/participantes/diego.jpg" alt="Diego">
+            </div>
+            <div class="participante-nombre">Diego</div>
         </div>
 
-        <!-- Agrega más tarjetas aquí -->
+        <div class="participante-card">
+            <div class="participante-avatar pendiente">IN</div>
+            <div class="participante-nombre">Ina</div>
+            <div class="foto-pendiente">Foto pendiente</div>
+        </div>
+
+        <div class="participante-card">
+            <div class="participante-avatar pendiente">PA</div>
+            <div class="participante-nombre">Pablo</div>
+            <div class="foto-pendiente">Foto pendiente</div>
+        </div>
 
     </div>
 
