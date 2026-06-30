@@ -186,22 +186,7 @@
                     {% endfor %}
                 </div>
 
-                
-                <!-- Metricas descartadas-->
-
-                <!-- <p class="subseccion-label">Métrica de intensidad *</p>
-                {% if form.intensidad.errors %}
-                    <ul class="errorlist">{% for e in form.intensidad.errors %}<li>{{ e }}</li>{% endfor %}</ul>
-                {% endif %}
-                <div class="radio-group">
-                    {% for value, label in form.intensidad.field.choices %}
-                    <label>
-                        <input type="radio" name="intensidad" value="{{ value }}"
-                            {% if form.intensidad.value == value %}checked{% endif %}>
-                        {{ label }}
-                    </label>
-                    {% endfor %}
-                </div>> -->
+                {# Métrica de intensidad descartada: campo retirado del formulario. #}
 
             </div>
             {% endif %}
@@ -225,26 +210,17 @@
     {% if tiene_vocales %}
     const radiosMedida = document.querySelectorAll('input[name="medida"]');
     {% endif %}
-    {% if tiene_s %}
-    const radiosIntensidad = document.querySelectorAll('input[name="intensidad"]');
-    {% endif %}
 
     function actualizar() {
         let ok = true;
         {% if tiene_vocales %}
         ok = ok && [...radiosMedida].some(r => r.checked);
         {% endif %}
-        {% if tiene_s %}
-        ok = ok && [...radiosIntensidad].some(r => r.checked);
-        {% endif %}
         btnExtraer.disabled = !ok;
     }
 
     {% if tiene_vocales %}
     radiosMedida.forEach(r => r.addEventListener('change', actualizar));
-    {% endif %}
-    {% if tiene_s %}
-    radiosIntensidad.forEach(r => r.addEventListener('change', actualizar));
     {% endif %}
 
     window.addEventListener('load', actualizar);

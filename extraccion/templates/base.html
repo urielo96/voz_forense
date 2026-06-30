@@ -40,9 +40,16 @@
             color: #001a3e;
             text-decoration: none;
         }
-        .navbar-logo .sub {
-            padding: 0px;
-            align-items: center;
+        .navbar-title {
+            display: flex;
+            flex-direction: column;
+        }
+        .navbar-title-main {
+            font-weight: 600;
+            font-size: 1rem;
+            color: #001a3e;
+        }
+        .navbar-title-sub {
             font-size: 0.8rem;
             font-weight: 300;
             margin-left: 36px;
@@ -273,9 +280,9 @@
     <nav class="navbar">
         <a class="navbar-logo" href="{% url 'inicio' %}">
             <img src="/static/img/Logos_unam_Enacif.png" alt="ENACIF" onload="this.classList.add('loaded')">
-        <div class="d-flex align-items-center">
-            <div class="navbar-logo">ESCUELA NACIONAL DE CIENCIAS FORENSES</div>
-            <div class="navbar-logo sub">UNIVERSIDAD NACIONAL AUTÓNOMA DE MÉXICO</div>
+        <div class="navbar-title">
+            <div class="navbar-title-main">ESCUELA NACIONAL DE CIENCIAS FORENSES</div>
+            <div class="navbar-title-sub">UNIVERSIDAD NACIONAL AUTÓNOMA DE MÉXICO</div>
         </div>
         </a>
         <ul class="navbar-menu">
