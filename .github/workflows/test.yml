@@ -25,4 +25,8 @@ jobs:
         run: pip install -r requirements-test.txt
 
       - name: Correr tests de extracción de parámetros
+        env:
+          DJANGO_SETTINGS_MODULE: configuration.settings
+          SECRET_KEY: clave-solo-para-tests-no-importa
+          DEBUG: "True"
         run: python test_services.py
