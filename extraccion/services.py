@@ -194,13 +194,13 @@ def process_file_s(file_path, intensity_mode, center_b, sd_b, sk_b, kur_b):
     # Definir los nombres de columna para el DataFrame
     column_names = ['name','Label','Start', 'Stop','Duration',intensity_mode + '_Intensity']
     if center_b:
-        column_names.append('Center_spectrum')
+        column_names.append('Centro de gravedad')
     if sd_b:
-        column_names.append('SD_spectrum')
+        column_names.append('Desviación estándar')
     if sk_b:
-        column_names.append('SK_spectrum')
+        column_names.append('Asimetría')
     if kur_b:
-        column_names.append('KUR__spectrum')
+        column_names.append('Curtosis')
     if center_b and sk_b:
         column_names.append('Altura_friccion')
 
