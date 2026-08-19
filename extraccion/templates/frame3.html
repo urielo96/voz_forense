@@ -113,7 +113,7 @@
 {% endblock %}
 
 {% block content %}
-<h1 class="page-title">Paso 3 de 3 — Parámetros acústicos</h1>
+<h1 class="page-title">Paso 3 de 3 — Parámetros acústicos<span class="tooltip-icon" tabindex="0">?<span class="tooltip-text">Parámetro acústico: es la característica del sonido de una vocal que se mide mediante un modelo físico o matemático.</span></span></h1>
 
 <div class="card">
     <p class="instrucciones">
@@ -127,6 +127,7 @@
 
     <form method="post" id="form-frame3">
         {% csrf_token %}
+        <input type="hidden" name="token_descarga" id="token_descarga">
 
         <div class="params-grid">
 
@@ -169,7 +170,7 @@
             {% if tiene_s %}
             <!-- Parámetros del fonema /s/ -->
             <div class="param-box">
-                <div class="section-header salmon">Fonema /s/</div>
+                <div class="section-header salmon">Fonema /s/<span class="tooltip-icon" tabindex="0">?<span class="tooltip-text">Fonema /s/: las medidas espectrales cuantifican cómo se distribuye la energía del ruido generado durante la producción de la consonante /s/ a lo largo de las diferentes frecuencias que la componen.</span></span></div>
 
                 <p class="subseccion-label">Medidas espectrales</p>
                 {% if form.espectro.errors %}
@@ -248,5 +249,37 @@
     {% endif %}
 
     window.addEventListener('load', actualizar);
+
+    // La extracción con Praat puede tardar; avisamos y evitamos doble envío.
+    // Como la respuesta es una descarga (la página no navega), el servidor
+    // devuelve la cookie 'descarga_lista' con este token y así sabemos cerrar
+    // el modal y reactivar el botón.
+    document.getElementById('form-frame3').addEventListener('submit', function () {
+        const token = String(Date.now());
+        document.getElementById('token_descarga').value = token;
+        btnExtraer.disabled = true;
+        mostrarProceso(
+            'Extrayendo los parámetros acústicos…',
+            'Estamos analizando los audios con Praat y generando el archivo .zip. La descarga iniciará sola. No cierres ni recargues esta ventana.',
+            'Tiempo aproximado: 1 a 3 minutos'
+        );
+
+        const revisar = setInterval(function () {
+            if (document.cookie.indexOf('descarga_lista=' + token) !== -1) {
+                clearInterval(revisar);
+                document.cookie = 'descarga_lista=; Max-Age=0; path=/';
+                procesoTerminado(
+                    'Listo, tu archivo .zip se descargó',
+                    'Revisa la carpeta de descargas de tu navegador. Para analizar otros audios, inicia un nuevo análisis.'
+                );
+            }
+        }, 500);
+        // Red de seguridad por si la cookie nunca llega (p. ej. un error 500).
+        setTimeout(function () {
+            clearInterval(revisar);
+            ocultarProceso();
+            actualizar();
+        }, 300000);
+    });
 </script>
 {% endblock %}

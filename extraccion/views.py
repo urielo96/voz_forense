@@ -57,7 +57,8 @@ def frame1(request):
         form = Frame1Form(archivos_existentes=ya_cargados)
 
     nombres = request.session.get('archivos_nombres', {})
-    return render(request, 'frame1.html', {'form': form, 'paso': 1, 'ya_cargados': ya_cargados, 'nombres': nombres})
+    return render(request, 'frame1.html', {'form': form, 'paso': 1, 'es_herramienta': True,
+                                           'ya_cargados': ya_cargados, 'nombres': nombres})
 
 
 # Archivos de ejemplo empaquetados con la app (clips H3 recortados ~18 s)
@@ -97,7 +98,7 @@ def frame2(request):
             initial['fonema'] = request.session['fonemas']
         form = Frame2Form(initial=initial)
 
-    return render(request, 'frame2.html', {'form': form, 'paso': 2})
+    return render(request, 'frame2.html', {'form': form, 'paso': 2, 'es_herramienta': True})
 
 
 def frame3(request):
@@ -157,6 +158,9 @@ def frame3(request):
 
             response = HttpResponse(data, content_type='application/zip')
             response['Content-Disposition'] = 'attachment; filename="extraccion.zip"'
+            # La descarga no recarga la página, así que el modal de "procesando"
+            # se quedaría pegado: esta cookie le avisa al JS que ya terminó.
+            response.set_cookie('descarga_lista', request.POST.get('token_descarga', '1'), max_age=60)
             return response
     else:
         initial = request.session.get('frame3_params', {})
@@ -165,6 +169,7 @@ def frame3(request):
     return render(request, 'frame3.html', {
         'form': form,
         'paso': 3,
+        'es_herramienta': True,
         'tiene_vocales': tiene_vocales,
         'tiene_s': tiene_s,
     })

@@ -85,7 +85,7 @@
             border-color: #6e7271;
         }
 
-        /* ── SUBMENU ── */
+        /* ── SUBMENU (pestañas de módulo) ── */
         .submenu {
             background: #fff;
             border-bottom: 1px solid #acadad;
@@ -93,14 +93,24 @@
             justify-content: flex-end;
             padding: 6px 32px;
         }
-        .submenu span {
-            background: #929292;
-            color: #fff;
-            font-size: 0.82rem;
-            padding: 4px 16px;
-            border-radius: 4px;
-            font-weight: 500;
+        .modulo-tabs {
+            display: flex;
+            gap: 6px;
+            list-style: none;
         }
+        .modulo-tabs a {
+            display: block;
+            background: #eef1f4;
+            color: #4a6278;
+            font-size: 0.82rem;
+            padding: 5px 16px;
+            border-radius: 4px 4px 0 0;
+            font-weight: 500;
+            text-decoration: none;
+            transition: background 0.15s, color 0.15s;
+        }
+        .modulo-tabs a:hover { background: #dde3ea; color: #001a3e; }
+        .modulo-tabs a.active { background: #002d6b; color: #fff; }
 
         /* ── STEPPER ── */
         .stepper-wrap {
@@ -264,6 +274,123 @@
             font-size: 0.88rem;
         }
 
+        /* ── TOOLTIP "?" (glosario) ── */
+        .tooltip-icon {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 16px;
+            height: 16px;
+            background: #4a7c8a;
+            color: #fff;
+            border-radius: 50%;
+            font-size: 0.65rem;
+            font-weight: 700;
+            cursor: help;
+            margin-left: 5px;
+            position: relative;
+            vertical-align: middle;
+        }
+        .tooltip-icon:hover .tooltip-text,
+        .tooltip-icon:focus .tooltip-text { display: block; }
+        .tooltip-text {
+            display: none;
+            position: absolute;
+            bottom: 120%;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #1a2a4e;
+            color: #fff;
+            font-size: 0.78rem;
+            font-weight: 400;
+            text-align: left;
+            padding: 8px 12px;
+            border-radius: 6px;
+            width: 260px;
+            z-index: 10;
+            line-height: 1.4;
+            white-space: normal;
+        }
+        /* Para iconos pegados al margen izquierdo: el globo no se sale de la página. */
+        .tooltip-icon.tooltip-izq .tooltip-text {
+            left: -8px;
+            transform: none;
+        }
+
+        /* ── MODAL DE PROCESAMIENTO ── */
+        .overlay-proceso {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 26, 62, 0.55);
+            z-index: 999;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        .overlay-proceso.visible { display: flex; }
+        .proceso-box {
+            background: #fff;
+            border-radius: 12px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.25);
+            padding: 32px 36px;
+            max-width: 420px;
+            text-align: center;
+        }
+        .proceso-spinner {
+            width: 46px;
+            height: 46px;
+            margin: 0 auto 18px;
+            border: 4px solid #dde3ea;
+            border-top-color: #003f8a;
+            border-radius: 50%;
+            animation: girar 0.9s linear infinite;
+        }
+        @keyframes girar { to { transform: rotate(360deg); } }
+        .proceso-box h3 {
+            font-size: 1.05rem;
+            color: #001a3e;
+            margin-bottom: 8px;
+        }
+        .proceso-box p {
+            font-size: 0.88rem;
+            color: #5a7080;
+            line-height: 1.55;
+        }
+        .proceso-tiempo {
+            display: inline-block;
+            margin-top: 12px;
+            background: #edf1fa;
+            color: #002d6b;
+            font-size: 0.8rem;
+            font-weight: 600;
+            border-radius: 20px;
+            padding: 5px 14px;
+        }
+        /* Estado final: la extracción terminó y el .zip ya se descargó. */
+        .proceso-box.listo .proceso-spinner {
+            animation: none;
+            border-color: #2e7d4f;
+            position: relative;
+        }
+        .proceso-box.listo .proceso-spinner::after {
+            content: "✓";
+            position: absolute;
+            inset: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #2e7d4f;
+            font-size: 1.5rem;
+            font-weight: 700;
+        }
+        .proceso-acciones {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            margin-top: 20px;
+        }
+
         /* ── RESPONSIVE ── */
         @media (max-width: 700px) {
             main { padding: 16px; }
@@ -294,10 +421,14 @@
         </ul>
     </nav>
 
-    <!-- SUBMENU -->
+    <!-- SUBMENU: pestañas de módulo, solo dentro de la herramienta -->
+    {% if es_herramienta %}
     <div class="submenu">
-        <span>Módulo 1. Extracción de características</span>
+        <ul class="modulo-tabs">
+            <li><a href="{% url 'frame1' %}" class="active">Módulo 1. Extracción de características</a></li>
+        </ul>
     </div>
+    {% endif %}
 
     <!-- STEPPER -->
     {% if paso %}
@@ -326,10 +457,51 @@
         {% block content %}{% endblock %}
     </main>
 
+    <!-- MODAL DE PROCESAMIENTO (lo activan frame1 y frame3) -->
+    <div class="overlay-proceso" id="overlay-proceso" role="status" aria-live="polite">
+        <div class="proceso-box">
+            <div class="proceso-spinner"></div>
+            <h3 id="proceso-titulo">Procesando…</h3>
+            <p id="proceso-texto">Estamos preparando tus archivos. No cierres ni recargues esta ventana.</p>
+            <span class="proceso-tiempo" id="proceso-tiempo"></span>
+            <div class="proceso-acciones" id="proceso-acciones" style="display:none;">
+                <a href="{% url 'frame1' %}" class="btn-primary" style="text-decoration:none;">Hacer otro análisis</a>
+            </div>
+        </div>
+    </div>
+
     <!-- FOOTER -->
     <footer>
         Escuela Nacional de Ciencias Forenses &mdash; SELIFO &copy; 2026
     </footer>
+
+    <script>
+        // Muestra el modal de procesamiento al enviar un formulario largo.
+        function mostrarProceso(titulo, texto, tiempo) {
+            document.getElementById('proceso-titulo').textContent = titulo;
+            document.getElementById('proceso-texto').textContent  = texto;
+            const t = document.getElementById('proceso-tiempo');
+            t.textContent = tiempo || '';
+            t.style.display = tiempo ? 'inline-block' : 'none';
+            document.querySelector('.proceso-box').classList.remove('listo');
+            document.getElementById('proceso-acciones').style.display = 'none';
+            document.getElementById('overlay-proceso').classList.add('visible');
+        }
+        // La extracción consume la sesión, así que al terminar el paso 3 ya no
+        // se puede repetir: dejamos el modal en un estado final con salida clara.
+        function procesoTerminado(titulo, texto) {
+            document.getElementById('proceso-titulo').textContent = titulo;
+            document.getElementById('proceso-texto').textContent  = texto;
+            document.getElementById('proceso-tiempo').style.display = 'none';
+            document.querySelector('.proceso-box').classList.add('listo');
+            document.getElementById('proceso-acciones').style.display = 'flex';
+        }
+        function ocultarProceso() {
+            document.getElementById('overlay-proceso').classList.remove('visible');
+        }
+        // Si el usuario regresa con el botón "atrás", el modal no debe quedarse pegado.
+        window.addEventListener('pageshow', ocultarProceso);
+    </script>
 
     {% block scripts %}{% endblock %}
 </body>

@@ -19,47 +19,31 @@
         line-height: 1.7;
         margin-bottom: 10px;
     }
-    .badge-row {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 10px;
-        margin-top: 12px;
+    .acerca-img {
+        display: block;
+        width: 100%;
+        max-width: 720px;
+        margin: 4px auto 0;
+        border-radius: 10px;
     }
-    .badge-python {
-        background: #4584b6;
-        border: 1px solid #acadad;
-        color: #ffffff;
-        border-radius: 20px;
-        padding: 5px 16px;
-        font-size: 0.82rem;
-        font-weight: 500;
+    .acerca-lista {
+        list-style: none;
+        margin: 10px 0 0;
     }
-    .badge-django {
-        background: #092e20;
-        border: 1px solid #acadad;
-        color: #ffffff;
-        border-radius: 20px;
-        padding: 5px 16px;
-        font-size: 0.82rem;
-        font-weight: 500;
+    .acerca-lista li {
+        font-size: 0.92rem;
+        color: #3a5060;
+        line-height: 1.7;
+        padding-left: 18px;
+        position: relative;
+        margin-bottom: 8px;
     }
-    .badge-praat {
-        background: #d71ebe;
-        border: 1px solid #acadad;
-        color: #ffffff;
-        border-radius: 20px;
-        padding: 5px 16px;
-        font-size: 0.82rem;
-        font-weight: 500;
-    }
-    .badge-textgrid {
-        background: #002050;
-        border: 1px solid #acadad;
-        color: #ffffff;
-        border-radius: 20px;
-        padding: 5px 16px;
-        font-size: 0.82rem;
-        font-weight: 500;
+    .acerca-lista li::before {
+        content: "•";
+        position: absolute;
+        left: 0;
+        color: #003f8a;
+        font-weight: 700;
     }
 </style>
 {% endblock %}
@@ -70,40 +54,36 @@
 <div class="card">
     <div class="acerca-section">
         <h2>¿Qué es ForVoz?</h2>
-        <p>
-            ForVoz es una herramienta web desarrollada por el Seminario de Lingüística Forense (SELIFO)
-            de la Escuela Nacional de Ciencias Forenses (ENACIF) de la Universidad Nacional Autónoma de México.
-        </p>
-        <p>
-            Su objetivo es facilitar la extracción automatizada de parámetros acústicos para estudios
-            de comparación de voz en contextos forenses, siguiendo estándares metodológicos internacionales.
-        </p>
+        <img class="acerca-img" src="/static/img/que_es_forvoz.png"
+             alt="ForVoz es una herramienta para comparar dos audios, extraer fonemas y calcular Likelihood Ratios (LR)">
     </div>
 
     <div class="acerca-section">
         <h2>Módulos disponibles</h2>
         <p>
-            Actualmente ForVoz cuenta con el <strong>Módulo 1: Extracción de características</strong>,
-            que permite extraer parámetros vocálicos (F0–F4) y espectrales del fonema /s/ a partir de
-            archivos de audio .wav anotados en Praat (.TextGrid).
+            Actualmente, ForVoz cuenta con el <strong>Módulo 1: Extracción de características</strong>,
+            el cual permite extraer características acústicas de las /s/ y de las vocales, a partir de
+            archivos de audio en formato .wav segmentados en Praat mediante archivos .TextGrid:
         </p>
-    </div>
-
-    <div class="acerca-section">
-        <h2>Tecnologías utilizadas</h2>
-        <div class="badge-row">
-            <span class="badge-python">Python</span>
-            <span class="badge-django">Django</span>
-            <span class="badge-praat">Praat / Parselmouth</span>
-            <span class="badge-textgrid">TextGrid</span>
-        </div>
+        <ul class="acerca-lista">
+            <li>
+                <strong>Vocales:</strong> frecuencia fundamental (F0) y los cuatro primeros
+                formantes vocálicos (F1–F4).
+            </li>
+            <li>
+                <strong>Fonema<span class="tooltip-icon tooltip-izq" tabindex="0">?<span class="tooltip-text">Fonema: se refiere a la unidad mínima de la lengua, es decir a cada uno de los sonidos que conforman una lengua y que crean significado.</span></span> /s/:</strong>
+                altura de la fricción, intensidad (promedio, máxima y mínima), centro de gravedad,
+                desviación estándar, asimetría (<em>skewness</em>) y curtosis (<em>kurtosis</em>).
+            </li>
+        </ul>
     </div>
 
     <div class="acerca-section">
         <h2>Institución</h2>
         <p>
-            Escuela Nacional de Ciencias Forenses (ENACIF) &mdash; UNAM<br>
-            Seminario de Lingüística Forense (SELIFO)
+            Seminario de Lingüística Forense (SELIFO)<br>
+            Escuela Nacional de Ciencias Forenses (ENACIF)<br>
+            Universidad Nacional Autónoma de México (UNAM)
         </p>
     </div>
 </div>
