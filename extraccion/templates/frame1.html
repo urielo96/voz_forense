@@ -24,39 +24,6 @@
         text-align: center;
         position: relative;
     }
-    .tooltip-icon {
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        width: 16px;
-        height: 16px;
-        background: #4a7c8a;
-        color: #fff;
-        border-radius: 50%;
-        font-size: 0.65rem;
-        font-weight: 700;
-        cursor: help;
-        margin-left: 5px;
-        position: relative;
-    }
-    .tooltip-icon:hover .tooltip-text { display: block; }
-    .tooltip-text {
-        display: none;
-        position: absolute;
-        bottom: 120%;
-        left: 50%;
-        transform: translateX(-50%);
-        background: #1a2a4e;
-        color: #fff;
-        font-size: 0.78rem;
-        font-weight: 400;
-        padding: 8px 12px;
-        border-radius: 6px;
-        width: 240px;
-        z-index: 10;
-        line-height: 1.4;
-        white-space: normal;
-    }
     .file-row {
         margin-bottom: 12px;
     }
@@ -154,8 +121,25 @@
         margin-left: 6px;
         vertical-align: middle;
     }
+    .ejemplo-wrap {
+        display: flex;
+        align-items: center;
+        gap: 14px;
+        flex-wrap: wrap;
+    }
+    .ejemplo-wrap .btn-secondary { flex-shrink: 0; }
+    .ejemplo-leyenda {
+        font-size: 0.95rem;
+        color: #3a5060;
+        line-height: 1.4;
+        max-width: 340px;
+    }
+    .ejemplo-leyenda strong { color: #003f8a; }
+
     @media (max-width: 600px) {
         .archivos-grid { grid-template-columns: 1fr; }
+        .btn-nav { flex-direction: column; align-items: stretch; }
+        .ejemplo-leyenda { max-width: none; }
     }
 </style>
 {% endblock %}
@@ -193,8 +177,8 @@
                     Voz indubitada
                     <span class="tooltip-icon">?
                         <span class="tooltip-text">
-                            La voz indubitada es la muestra de voz cuya identidad se conoce con certeza.
-                            Sirve como referencia para la comparación forense.
+                            Es la muestra de voz cuya identidad se conoce. Generalmente se refiere
+                            a la muestra de voz del sospechoso.
                         </span>
                     </span>
                 </div>
@@ -244,8 +228,8 @@
                     Voz dubitada
                     <span class="tooltip-icon">?
                         <span class="tooltip-text">
-                            La voz dubitada es la muestra de voz cuya identidad se desconoce o está en duda.
-                            Es la voz que se quiere identificar o comparar.
+                            Es la muestra de voz cuya identidad se desconoce o está en duda.
+                            Es la voz a la cual se le quiere atribuir autoría.
                         </span>
                     </span>
                 </div>
@@ -292,17 +276,18 @@
         </div>
 
         <div class="btn-nav">
-            <a href="{% url 'cargar_ejemplo' %}" class="btn-secondary">Usar audios de ejemplo</a>
+            <div class="ejemplo-wrap">
+                <a href="{% url 'cargar_ejemplo' %}" class="btn-secondary">Usar audios de ejemplo</a>
+                <p class="ejemplo-leyenda">
+                    ¿No tienes archivos? Usa los <strong>audios de ejemplo</strong> para probar la herramienta.
+                </p>
+            </div>
             <button type="submit" class="btn-primary" id="btn-continuar" disabled>
                 Continuar →
             </button>
         </div>
 
     </form>
-
-    <p style="text-align:center; font-size:0.8rem; color:#5a7080; margin-top:14px;">
-        ¿No tienes archivos? Usa los <strong>audios de ejemplo</strong> para probar la herramienta.
-    </p>
 </div>
 {% endblock %}
 
@@ -345,5 +330,14 @@
     });
 
     window.addEventListener('load', actualizarBoton);
+
+    // Subir y validar cuatro archivos tarda; avisamos al usuario.
+    document.getElementById('form-frame1').addEventListener('submit', function () {
+        mostrarProceso(
+            'Cargando tus archivos…',
+            'Estamos subiendo y revisando los archivos .wav y .TextGrid. No cierres ni recargues esta ventana.',
+            'Tiempo aproximado: menos de 1 minuto'
+        );
+    });
 </script>
 {% endblock %}

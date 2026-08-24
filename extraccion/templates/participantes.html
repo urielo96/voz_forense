@@ -78,6 +78,21 @@
         border-bottom: 1px solid #dde3ea;
     }
     .seccion-titulo:first-of-type { margin-top: 0; }
+
+    .estudiantes-lista {
+        list-style: none;
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+        gap: 8px 20px;
+    }
+    .estudiantes-lista li {
+        font-size: 0.9rem;
+        color: #001a3e;
+        padding: 8px 14px;
+        background: #f7fafc;
+        border: 1px solid #dde3ea;
+        border-radius: 8px;
+    }
 </style>
 {% endblock %}
 
@@ -94,23 +109,26 @@
 
         <div class="participante-card">
             <div class="participante-avatar">
-                <img src="/static/img/participantes/fernanda.png" alt="Fernanda">
+                <img src="/static/img/participantes/fernanda.png" alt="Fernanda López Escobedo">
             </div>
-            <div class="participante-nombre">Fernanda</div>
+            <div class="participante-nombre">Fernanda López Escobedo</div>
+            <div class="participante-rol">Responsable técnica</div>
         </div>
 
         <div class="participante-card">
             <div class="participante-avatar">
-                <img src="/static/img/participantes/julio-cesar.jpg" alt="Julio César">
+                <img src="/static/img/participantes/julio-cesar.jpg" alt="Julio César Martínez Sánchez">
             </div>
-            <div class="participante-nombre">Julio César</div>
+            <div class="participante-nombre">Julio César Martínez Sánchez</div>
+            <div class="participante-rol">Integrante del Grupo de Trabajo</div>
         </div>
 
         <div class="participante-card">
             <div class="participante-avatar">
-                <img src="/static/img/participantes/sofia.jpg" alt="Sofía">
+                <img src="/static/img/participantes/sofia.jpg" alt="N. Sofía Huerta Pacheco">
             </div>
-            <div class="participante-nombre">Sofía</div>
+            <div class="participante-nombre">N. Sofía Huerta Pacheco</div>
+            <div class="participante-rol">Integrante del Grupo de Trabajo</div>
         </div>
 
     </div>
@@ -120,24 +138,40 @@
 
         <div class="participante-card">
             <div class="participante-avatar">
-                <img src="/static/img/participantes/diego.jpg" alt="Diego">
+                <img src="/static/img/participantes/diego.jpg" alt="Diego Uriel Álvarez Almanza">
             </div>
-            <div class="participante-nombre">Diego</div>
+            <div class="participante-nombre">Diego Uriel Álvarez Almanza</div>
+            <div class="participante-rol">Coordinador Técnico del Sistema</div>
+        </div>
+
+        <div class="participante-card">
+            <div class="participante-avatar pendiente">PG</div>
+            <div class="participante-nombre">Pablo González Blando</div>
+            <div class="participante-rol">Colaborador en el Desarrollo del Sistema</div>
+            <div class="foto-pendiente">Foto pendiente</div>
         </div>
 
         <div class="participante-card">
             <div class="participante-avatar pendiente">IA</div>
             <div class="participante-nombre">Ian</div>
-            <div class="foto-pendiente">Foto pendiente</div>
-        </div>
-
-        <div class="participante-card">
-            <div class="participante-avatar pendiente">PA</div>
-            <div class="participante-nombre">Pablo</div>
+            <div class="participante-rol">Colaborador en el Desarrollo del Sistema</div>
             <div class="foto-pendiente">Foto pendiente</div>
         </div>
 
     </div>
+
+    <p class="seccion-titulo">Estudiantes por servicios de carácter social</p>
+    <ul class="estudiantes-lista">
+        <li>Bárbara Ivonne Alcántara Ambriz</li>
+        <li>Brisa Cauich García</li>
+        <li>Diana Paola Herrera Jiménez</li>
+        <li>Ixchel Alexa Galindo Espinosa</li>
+        <li>Karla Mariana Reyes Verdeja</li>
+        <li>Mariana Ibarra Hernández</li>
+        <li>Odette Espinosa Vargas</li>
+        <li>Rodrigo Daniel Contreras Álvarez</li>
+        <li>Valeria Desire García Castañeda</li>
+    </ul>
 
 </div>
 {% endblock %}

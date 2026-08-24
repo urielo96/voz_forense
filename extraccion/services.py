@@ -150,7 +150,7 @@ def process_file(file_path, genero, pitch_mode, formant_mode, intensity_modes, c
     formantes = [f'F{i} ({metrica_es})' for i in formant_mode] #...nombres en español que coinciden con los botones
 
     # Definir los nombres de columna para el DataFrame
-    column_names = ['name','Label','Start', 'Stop','Duration', f'F0 ({metrica_es})'] + formantes + [INTENSIDAD_LABELS.get(m, m) for m in intensity_modes]
+    column_names = ['Nombre','Etiqueta','Inicio', 'Fin','Duración', f'F0 ({metrica_es})'] + formantes + [INTENSIDAD_LABELS.get(m, m) for m in intensity_modes]
     if center_b:
         column_names.append('Centro de gravedad')
     if sd_b:
@@ -197,7 +197,7 @@ def process_file_vocal(file_path, vocales , genero, pitch_mode, formant_mode, in
     formantes = [f'F{i} ({metrica_es})' for i in formant_mode] #...nombres en español que coinciden con los botones
 
     # Definir los nombres de columna para el DataFrame (F0 solo si se seleccionó)
-    column_names = ['name','Label','Start', 'Stop','Duration']
+    column_names = ['Nombre','Etiqueta','Inicio', 'Fin','Duración']
     if incluir_pitch:
         column_names.append(f'F0 ({metrica_es})')
     column_names += formantes
@@ -224,7 +224,7 @@ def process_file_s(file_path, intensity_modes, center_b, sd_b, sk_b, kur_b, alt_
     intensity = sound.to_intensity(minimum_pitch=75, time_step=None, subtract_mean=True)
 
     # Definir los nombres de columna para el DataFrame
-    column_names = ['name','Label','Start', 'Stop','Duration'] + [INTENSIDAD_LABELS.get(m, m) for m in intensity_modes]
+    column_names = ['Nombre','Etiqueta','Inicio', 'Fin','Duración'] + [INTENSIDAD_LABELS.get(m, m) for m in intensity_modes]
     if center_b:
         column_names.append('Centro de gravedad')
     if sd_b:
@@ -335,7 +335,7 @@ def process_sample_separado(directory,vocales = ['a','e','i','o','u'],genero='X'
         df_completo = pd.concat(partes, ignore_index=True)
         # Ordenar columnas: metadata, vocales (F0-F4), espectrales y al final las
         # de intensidad.
-        meta = ['name', 'Label', 'Start', 'Stop', 'Duration']
+        meta = ['Nombre', 'Etiqueta', 'Inicio', 'Fin', 'Duración']
         espectral_orden = ['Centro de gravedad', 'Desviación estándar', 'Asimetría', 'Curtosis', 'Altura de la fricción']
         intensidad_orden = list(INTENSIDAD_LABELS.values())
         cols = list(df_completo.columns)
@@ -346,7 +346,7 @@ def process_sample_separado(directory,vocales = ['a','e','i','o','u'],genero='X'
                  + [c for c in intensidad_orden if c in cols])
         df_completo = df_completo[orden]
         # Ordenar filas por archivo y tiempo para que ambas voces queden legibles
-        df_completo = df_completo.sort_values(['name', 'Start']).reset_index(drop=True)
+        df_completo = df_completo.sort_values(['Nombre', 'Inicio']).reset_index(drop=True)
         df_completo.to_csv(os.path.join(directory, "General_Completo.csv"), index=False)
 
 
