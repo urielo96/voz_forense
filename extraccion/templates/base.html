@@ -27,6 +27,7 @@
             padding: 0 32px;
             height: 104px;
             box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+            position: relative;
         }
         .navbar-logo {
             display: flex;
@@ -83,6 +84,38 @@
             background: #002d6b;
             color: #fff;
             border-color: #6e7271;
+        }
+
+        /* ── BOTÓN HAMBURGUESA (solo móvil) ── */
+        .navbar-toggle {
+            display: none;
+            margin-left: auto;
+            flex-direction: column;
+            justify-content: center;
+            gap: 5px;
+            width: 44px;
+            height: 44px;
+            padding: 10px;
+            background: #fff;
+            border: 1px solid #dde3ea;
+            border-radius: 6px;
+            cursor: pointer;
+        }
+        .burger-linea {
+            display: block;
+            width: 100%;
+            height: 2px;
+            background: #001a3e;
+            border-radius: 2px;
+            transition: transform 0.2s, opacity 0.2s;
+        }
+        /* Abierto: las tres líneas se convierten en una "X". */
+        .navbar-toggle[aria-expanded="true"] .burger-linea:nth-child(1) {
+            transform: translateY(7px) rotate(45deg);
+        }
+        .navbar-toggle[aria-expanded="true"] .burger-linea:nth-child(2) { opacity: 0; }
+        .navbar-toggle[aria-expanded="true"] .burger-linea:nth-child(3) {
+            transform: translateY(-7px) rotate(-45deg);
         }
 
         /* ── SUBMENU (pestañas de módulo) ── */
@@ -394,9 +427,46 @@
         /* ── RESPONSIVE ── */
         @media (max-width: 700px) {
             main { padding: 16px; }
-            .navbar { padding: 0 16px; }
-            .navbar-menu { display: none; }
+            .navbar { padding: 0 16px; height: 80px; }
             .stepper-wrap { padding: 12px 16px; }
+
+            /* El título institucional se encoge para dejar sitio al botón. */
+            .navbar-logo { margin-right: 12px; gap: 8px; padding: 4px 0; }
+            .navbar-logo img { height: 40px; }
+            .navbar-title-main { font-size: 0.72rem; line-height: 1.2; }
+            .navbar-title-sub { font-size: 0.62rem; margin-left: 0; }
+
+            .navbar-toggle { display: flex; }
+
+            /* El menú pasa de barra horizontal a panel desplegable. */
+            .navbar-menu {
+                display: none;
+                position: absolute;
+                top: 100%;
+                left: 0;
+                right: 0;
+                flex-direction: column;
+                gap: 0;
+                margin-left: 0;
+                background: #fff;
+                border-top: 1px solid #dde3ea;
+                box-shadow: 0 6px 16px rgba(0,0,0,0.12);
+                z-index: 50;
+            }
+            .navbar-menu.abierto { display: flex; }
+            .navbar-menu li a {
+                border: none;
+                border-bottom: 1px solid #eef1f4;
+                border-radius: 0;
+                padding: 14px 20px;
+                font-size: 1rem;
+            }
+            .navbar-menu li:last-child a { border-bottom: none; }
+            .navbar-menu li a.active { border-color: transparent; }
+
+            /* Las pestañas de módulo también se desbordaban en pantallas chicas. */
+            .submenu { padding: 6px 16px; justify-content: flex-start; overflow-x: auto; }
+            .modulo-tabs a { white-space: nowrap; }
         }
     </style>
     {% block extra_styles %}{% endblock %}
@@ -412,7 +482,13 @@
                 <div class="navbar-title-sub">UNIVERSIDAD NACIONAL AUTÓNOMA DE MÉXICO</div>
             </div>
         </a>
-        <ul class="navbar-menu">
+        <button class="navbar-toggle" id="navbar-toggle" type="button"
+                aria-label="Abrir menú de navegación" aria-expanded="false" aria-controls="navbar-menu">
+            <span class="burger-linea"></span>
+            <span class="burger-linea"></span>
+            <span class="burger-linea"></span>
+        </button>
+        <ul class="navbar-menu" id="navbar-menu">
             <li><a href="{% url 'inicio' %}" {% if request.resolver_match.url_name == 'inicio' %}class="active"{% endif %}>Inicio</a></li>
             <li><a href="{% url 'acerca' %}" {% if request.resolver_match.url_name == 'acerca' %}class="active"{% endif %}>Acerca de</a></li>
             <li><a href="{% url 'frame1' %}" {% if request.resolver_match.url_name in 'frame1 frame2 frame3' %}class="active"{% endif %}>Herramienta</a></li>
@@ -476,6 +552,38 @@
     </footer>
 
     <script>
+        // Menú hamburguesa: en móvil la cabecera no cabe en horizontal y las
+        // secciones sólo se veían al rotar el teléfono.
+        (function () {
+            const boton = document.getElementById('navbar-toggle');
+            const menu  = document.getElementById('navbar-menu');
+            if (!boton || !menu) return;
+
+            function cerrar() {
+                menu.classList.remove('abierto');
+                boton.setAttribute('aria-expanded', 'false');
+                boton.setAttribute('aria-label', 'Abrir menú de navegación');
+            }
+            boton.addEventListener('click', function (e) {
+                e.stopPropagation();
+                const abierto = menu.classList.toggle('abierto');
+                boton.setAttribute('aria-expanded', abierto ? 'true' : 'false');
+                boton.setAttribute('aria-label', abierto ? 'Cerrar menú de navegación'
+                                                         : 'Abrir menú de navegación');
+            });
+            // Tocar fuera del panel o pulsar Escape lo cierra.
+            document.addEventListener('click', function (e) {
+                if (menu.classList.contains('abierto') && !menu.contains(e.target)) cerrar();
+            });
+            document.addEventListener('keydown', function (e) {
+                if (e.key === 'Escape') cerrar();
+            });
+            // Al volver a horizontal/escritorio el panel deja de aplicar.
+            window.addEventListener('resize', function () {
+                if (window.innerWidth > 700) cerrar();
+            });
+        })();
+
         // Muestra el modal de procesamiento al enviar un formulario largo.
         function mostrarProceso(titulo, texto, tiempo) {
             document.getElementById('proceso-titulo').textContent = titulo;
