@@ -120,6 +120,13 @@
         Selecciona los parámetros acústicos que deseas extraer.
         Al terminar, se generará un archivo <strong>.zip</strong> con los resultados del análisis.
     </p>
+    {% if tiene_vocales %}
+    <p class="instrucciones" id="nota-paso4">
+        <strong>Paso 4 (comparación, demostración):</strong> para habilitarlo marca
+        <strong>F1, F2 y F3</strong> y usa la métrica <strong>Punto medio</strong>.
+        <span id="estado-paso4"></span>
+    </p>
+    {% endif %}
 
     {% if form.non_field_errors %}
         <div class="alert">{{ form.non_field_errors }}</div>
@@ -228,7 +235,29 @@
     const radiosIntensidad = document.querySelectorAll('input[name="intensidad"]');
     {% endif %}
 
+    {% if tiene_vocales %}
+    function paso4Habilitado() {
+        const marcados = [...checksFormantes].filter(c => c.checked).map(c => c.value);
+        return ['1', '2', '3'].every(v => marcados.includes(v));
+    }
+    function actualizarNotaPaso4() {
+        const estado = document.getElementById('estado-paso4');
+        const medida = [...radiosMedida].find(r => r.checked);
+        if (!paso4Habilitado()) {
+            estado.textContent = '— Ahora no se habilitará.';
+            estado.style.color = '#8a4b00';
+        } else if (!medida || medida.value !== 'median') {
+            estado.textContent = '— Se habilitará, pero conviene usar "Punto medio".';
+            estado.style.color = '#8a4b00';
+        } else {
+            estado.textContent = '— ✓ Se habilitará al terminar la extracción.';
+            estado.style.color = '#1e7a46';
+        }
+    }
+    {% endif %}
+
     function actualizar() {
+        {% if tiene_vocales %}actualizarNotaPaso4();{% endif %}
         let ok = true;
         {% if tiene_vocales %}
         ok = ok && [...radiosMedida].some(r => r.checked);
@@ -274,10 +303,9 @@
                 );
                 {% if tiene_vocales %}
                 // El paso 4 (MVKD) necesita F1, F2 y F3 de las vocales.
-                const marcados = [...checksFormantes].filter(c => c.checked).map(c => c.value);
-                if (['1', '2', '3'].every(v => marcados.includes(v))) {
-                    document.getElementById('btn-ir-paso4').style.display = 'inline-block';
-                }
+                const paso4 = paso4Habilitado();
+                document.getElementById('btn-ir-paso4').style.display = paso4 ? 'inline-block' : 'none';
+                document.getElementById('nota-sin-paso4').style.display = paso4 ? 'none' : 'block';
                 {% endif %}
             }
         }, 500);
