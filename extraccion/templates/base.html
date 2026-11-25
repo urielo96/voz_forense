@@ -520,9 +520,14 @@
                 <span class="step-label">Fonemas</span>
             </div>
             <div class="step-line {% if paso > 2 %}done{% endif %}"></div>
-            <div class="step {% if paso == 3 %}active{% endif %}">
-                <div class="step-circle">3</div>
+            <div class="step {% if paso == 3 %}active{% elif paso > 3 %}done{% endif %}">
+                <div class="step-circle">{% if paso > 3 %}✓{% else %}3{% endif %}</div>
                 <span class="step-label">Parámetros</span>
+            </div>
+            <div class="step-line {% if paso > 3 %}done{% endif %}"></div>
+            <div class="step {% if paso == 4 %}active{% endif %}">
+                <div class="step-circle">4</div>
+                <span class="step-label">Comparación (demo)</span>
             </div>
         </div>
     </div>
@@ -541,6 +546,7 @@
             <p id="proceso-texto">Estamos preparando tus archivos. No cierres ni recargues esta ventana.</p>
             <span class="proceso-tiempo" id="proceso-tiempo"></span>
             <div class="proceso-acciones" id="proceso-acciones" style="display:none;">
+                <a href="{% url 'frame4' %}" class="btn-secondary" id="btn-ir-paso4" style="text-decoration:none; display:none;">Paso 4 · Comparación (demostración)</a>
                 <a href="{% url 'frame1' %}" class="btn-primary" style="text-decoration:none;">Hacer otro análisis</a>
             </div>
         </div>

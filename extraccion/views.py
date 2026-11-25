@@ -1,11 +1,14 @@
 import os
+import time
 import uuid
 import shutil
+import numpy as np
 from django.shortcuts import render, redirect
 from django.http import HttpResponse
 from django.conf import settings
 from extraccion.forms import Frame1Form, Frame2Form, Frame3Form
 from extraccion import services as sc
+from extraccion import mvkd
 
 
 def _session_dir(request):
@@ -145,6 +148,18 @@ def frame3(request):
                 gen_s=tiene_s,
             )
 
+            # Paso 4 (demostración MVKD): si se extrajeron F1, F2 y F3 de vocales,
+            # se guarda una copia del CSV de vocales antes de borrar la sesión.
+            request.session.pop('mvkd', None)
+            general_vocal = os.path.join(session_dir, 'General_Vocal.csv')
+            if tiene_vocales and {1, 2, 3} <= set(formant_mode) and os.path.exists(general_vocal):
+                copia = _ruta_mvkd(request.session['dir_id'])
+                shutil.copy(general_vocal, copia)
+                request.session['mvkd'] = {
+                    'archivo': os.path.basename(copia),
+                    'medida': form.cleaned_data.get('medida', 'mean'),
+                }
+
             zip_base = os.path.join(settings.BASE_DIR, 'temporal_file_storage', request.session['dir_id'] + '_result')
             shutil.make_archive(zip_base, 'zip', session_dir)
 
@@ -173,6 +188,57 @@ def frame3(request):
         'tiene_vocales': tiene_vocales,
         'tiene_s': tiene_s,
     })
+
+
+_MVKD_VIGENCIA_S = 2 * 60 * 60  # las copias para el paso 4 se borran a las 2 h
+
+
+def _ruta_mvkd(dir_id):
+    return os.path.join(settings.BASE_DIR, 'temporal_file_storage', dir_id + '_mvkd.csv')
+
+
+def _limpiar_mvkd_viejos():
+    carpeta = os.path.join(settings.BASE_DIR, 'temporal_file_storage')
+    ahora = time.time()
+    for nombre in os.listdir(carpeta):
+        ruta = os.path.join(carpeta, nombre)
+        if nombre.endswith('_mvkd.csv') and ahora - os.path.getmtime(ruta) > _MVKD_VIGENCIA_S:
+            try:
+                os.remove(ruta)
+            except OSError:
+                pass
+
+
+def frame4(request):
+    """Paso 4: comparación MVKD dubitada vs indubitada (demostración técnica)."""
+    _limpiar_mvkd_viejos()
+    datos = request.session.get('mvkd')
+    ruta = os.path.join(settings.BASE_DIR, 'temporal_file_storage', datos['archivo']) if datos else None
+    contexto = {'paso': 4, 'es_herramienta': True,
+                'poblacion_ok': mvkd.poblacion_disponible(),
+                'medida': sc.PITCH_LABELS.get(datos['medida'], datos['medida']) if datos else '',
+                'medida_es_punto_medio': bool(datos) and datos['medida'] == 'median'}
+
+    if not ruta or not os.path.exists(ruta):
+        contexto['sin_datos'] = True
+        return render(request, 'frame4.html', contexto)
+
+    df, cols = mvkd.leer_general_vocal(ruta)
+    vocales = mvkd.vocales_comparables(df)
+    contexto['vocales'] = vocales
+
+    if request.method == 'POST' and contexto['poblacion_ok']:
+        vocal = request.POST.get('vocal', '')
+        if any(v['vocal'] == vocal and v['ok'] for v in vocales):
+            try:
+                contexto['resultado'] = mvkd.comparar(df, cols, vocal)
+            except (ValueError, np.linalg.LinAlgError) as e:
+                contexto['error'] = str(e)
+        else:
+            contexto['error'] = 'Elige una vocal con al menos 2 mediciones en cada voz.'
+        contexto['vocal_elegida'] = vocal
+
+    return render(request, 'frame4.html', contexto)
 
 
 def inicio(request):
