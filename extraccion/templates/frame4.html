@@ -1,0 +1,176 @@
+{% extends 'base.html' %}
+
+{% block title %}Paso 4 — Comparación MVKD (demostración){% endblock %}
+
+{% block extra_styles %}
+<style>
+    .aviso-demo {
+        background: #fff4e5;
+        border-left: 5px solid #e07b00;
+        border-radius: 8px;
+        padding: 14px 18px;
+        margin-bottom: 20px;
+        color: #5a3600;
+        line-height: 1.5;
+    }
+    .aviso-demo strong { color: #8a4b00; }
+    .vocal-grid {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        margin: 12px 0 20px;
+    }
+    .vocal-opcion input { display: none; }
+    .vocal-opcion label {
+        display: inline-block;
+        min-width: 90px;
+        padding: 10px 14px;
+        border: 2px solid #c9d6e3;
+        border-radius: 10px;
+        text-align: center;
+        cursor: pointer;
+        background: #fff;
+    }
+    .vocal-opcion label .vocal { font-size: 1.4rem; font-weight: 700; color: #003f8a; display: block; }
+    .vocal-opcion label .conteo { font-size: 0.78rem; color: #5b6b7b; }
+    .vocal-opcion input:checked + label { border-color: #003f8a; background: #eaf1fb; }
+    .vocal-opcion.deshabilitada label { opacity: 0.45; cursor: not-allowed; }
+    .resultado-lr {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+        gap: 12px;
+        margin: 16px 0;
+    }
+    .dato {
+        background: #f5f8fb;
+        border-radius: 10px;
+        padding: 12px 14px;
+    }
+    .dato .etiqueta { font-size: 0.8rem; color: #5b6b7b; }
+    .dato .valor { font-size: 1.35rem; font-weight: 700; color: #003f8a; }
+    .tabla-medias { border-collapse: collapse; margin: 8px 0 16px; font-size: 0.92rem; }
+    .tabla-medias th, .tabla-medias td { border: 1px solid #d6dee6; padding: 6px 12px; text-align: right; }
+    .tabla-medias th:first-child, .tabla-medias td:first-child { text-align: left; }
+    .tippett { width: 100%; max-width: 820px; border: 1px solid #d6dee6; border-radius: 8px; }
+    .explica { color: #3d4b59; line-height: 1.55; font-size: 0.93rem; }
+</style>
+{% endblock %}
+
+{% block content %}
+<h1 class="page-title">Paso 4 — Comparación de voces (MVKD)</h1>
+
+<div class="aviso-demo">
+    <strong>Demostración técnica. No interpretar forensemente.</strong>
+    La población de referencia es la vocal inglesa <em>“er”</em> de 24 locutoras del inglés,
+    y los audios analizados son vocales del español. El cálculo muestra el flujo completo
+    (mediciones → razón de verosimilitud → calibración), pero el valor obtenido no tiene validez
+    como evidencia. Para ello se requiere una población de referencia en español.
+</div>
+
+<div class="card">
+{% if not poblacion_ok %}
+    <div class="alert">Falta el archivo de la población de referencia en el servidor. El paso 4 no está disponible por ahora.</div>
+    <div class="btn-nav"><a href="{% url 'frame1' %}" class="btn-primary">Hacer otro análisis</a></div>
+
+{% elif sin_datos %}
+    <p class="instrucciones">
+        No hay mediciones disponibles para comparar. El paso 4 usa los formantes
+        <strong>F1, F2 y F3</strong> de las vocales extraídos en el paso 3 (se conservan durante 2 horas).
+    </p>
+    <div class="btn-nav"><a href="{% url 'frame1' %}" class="btn-primary">Iniciar un análisis</a></div>
+
+{% else %}
+    <p class="instrucciones">
+        Elige la vocal que quieres comparar entre la voz <strong>dubitada (Q)</strong> y la
+        <strong>indubitada (K)</strong>. Se usan sus formantes F1, F2 y F3 (métrica: <strong>{{ medida }}</strong>).
+    </p>
+    {% if not medida_es_punto_medio %}
+    <div class="alert">El modelo de referencia usa formantes en el <strong>punto medio</strong> de la vocal.
+        Extrajiste con “{{ medida }}”; para una comparación coherente repite el paso 3 con “Punto medio”.</div>
+    {% endif %}
+
+    {% if error %}<div class="alert">{{ error }}</div>{% endif %}
+
+    <form method="post" id="form-frame4">
+        {% csrf_token %}
+        <div class="vocal-grid">
+            {% for v in vocales %}
+            <div class="vocal-opcion {% if not v.ok %}deshabilitada{% endif %}">
+                <input type="radio" name="vocal" value="{{ v.vocal }}" id="v_{{ v.vocal }}"
+                       {% if not v.ok %}disabled{% endif %}
+                       {% if v.vocal == vocal_elegida %}checked{% endif %}>
+                <label for="v_{{ v.vocal }}">
+                    <span class="vocal">/{{ v.vocal }}/</span>
+                    <span class="conteo">K: {{ v.n_k }} · Q: {{ v.n_q }}</span>
+                </label>
+            </div>
+            {% endfor %}
+        </div>
+        <div class="btn-nav">
+            <a href="{% url 'frame1' %}" class="btn-secondary">Hacer otro análisis</a>
+            <button type="submit" class="btn-primary" id="btn-comparar">Comparar</button>
+        </div>
+    </form>
+
+    {% if resultado %}
+    <hr style="margin:24px 0; border:none; border-top:1px solid #e1e8ef;">
+    <h2 style="color:#003f8a; margin-bottom:6px;">Resultado para /{{ resultado.vocal }}/</h2>
+
+    <div class="resultado-lr">
+        <div class="dato"><div class="etiqueta">log10 LR calibrado</div><div class="valor">{{ resultado.lr_log10|floatformat:2 }}</div></div>
+        <div class="dato"><div class="etiqueta">LR (escala lineal)</div><div class="valor">{{ resultado.lr_texto }}</div></div>
+        <div class="dato"><div class="etiqueta">Score sin calibrar (log10)</div><div class="valor">{{ resultado.score_log10|floatformat:2 }}</div></div>
+        <div class="dato"><div class="etiqueta">Cllr del sistema</div><div class="valor">{{ resultado.validacion.cllr|floatformat:2 }}</div></div>
+    </div>
+
+    <p class="explica">
+        {% if resultado.lr_log10 > 0 %}
+        Con esta población, las mediciones son <strong>{{ resultado.lr_texto }} veces más probables</strong>
+        si Q y K son del mismo locutor que si son de locutores distintos.
+        {% else %}
+        Con esta población, las mediciones son más probables si Q y K son de <strong>locutores distintos</strong>.
+        {% endif %}
+        Recuerda que es una demostración: el valor cambia mucho según la vocal y la población no es del español.
+    </p>
+
+    <table class="tabla-medias">
+        <tr><th>Voz</th><th>Tokens</th><th>F1 (Hz)</th><th>F2 (Hz)</th><th>F3 (Hz)</th></tr>
+        <tr><td>Indubitada (K)</td><td>{{ resultado.n_k }}</td>{% for m in resultado.media_k %}<td>{{ m }}</td>{% endfor %}</tr>
+        <tr><td>Dubitada (Q)</td><td>{{ resultado.n_q }}</td>{% for m in resultado.media_q %}<td>{{ m }}</td>{% endfor %}</tr>
+    </table>
+
+    <img class="tippett" alt="Gráfica de Tippett" src="data:image/png;base64,{{ resultado.tippett_png }}">
+
+    <p class="explica" style="margin-top:12px;">
+        <strong>Cómo leer la gráfica:</strong> la curva roja son comparaciones de la población entre grabaciones del mismo
+        locutor; la azul, entre locutores distintos. Entre más separadas, mejor discrimina el sistema.
+        El punto rojo marca el LR de esta comparación.
+        Validación cruzada: {{ resultado.validacion.n_ss }} comparaciones mismo locutor y {{ resultado.validacion.n_ds }} distinto locutor;
+        errores {{ resultado.validacion.error_ss|floatformat:1 }}% y {{ resultado.validacion.error_ds|floatformat:1 }}%.
+        Calibración: peso {{ resultado.peso|floatformat:4 }}, ordenada {{ resultado.ordenada|floatformat:4 }}.
+    </p>
+    <p class="explica" style="font-size:0.82rem;">
+        Método: MVKD (Aitken &amp; Lucy 2004; Morrison 2011), calibración por regresión logística, partición R1.R2, prior 0.5.
+    </p>
+    {% endif %}
+{% endif %}
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    const formComparar = document.getElementById('form-frame4');
+    if (formComparar) {
+        formComparar.addEventListener('submit', function (e) {
+            if (!formComparar.querySelector('input[name="vocal"]:checked')) {
+                e.preventDefault();
+                return;
+            }
+            document.getElementById('btn-comparar').disabled = true;
+            mostrarProceso('Calculando la comparación…',
+                'Se calcula el LR con el modelo MVKD y la validación cruzada de la población de referencia.',
+                'Unos segundos');
+        });
+    }
+</script>
+{% endblock %}

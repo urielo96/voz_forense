@@ -272,6 +272,13 @@
                     'Listo, tu archivo .zip se descargó',
                     'Revisa la carpeta de descargas de tu navegador. Para analizar otros audios, inicia un nuevo análisis.'
                 );
+                {% if tiene_vocales %}
+                // El paso 4 (MVKD) necesita F1, F2 y F3 de las vocales.
+                const marcados = [...checksFormantes].filter(c => c.checked).map(c => c.value);
+                if (['1', '2', '3'].every(v => marcados.includes(v))) {
+                    document.getElementById('btn-ir-paso4').style.display = 'inline-block';
+                }
+                {% endif %}
             }
         }, 500);
         // Red de seguridad por si la cookie nunca llega (p. ej. un error 500).

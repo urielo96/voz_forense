@@ -16,4 +16,5 @@ urlpatterns = [
     path('herramienta/ejemplo/', views.cargar_ejemplo, name='cargar_ejemplo'),
     path('herramienta/fonemas/', views.frame2, name='frame2'),
     path('herramienta/parametros/', views.frame3, name='frame3'),
+    path('herramienta/comparacion/', views.frame4, name='frame4'),
 ]
